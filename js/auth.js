@@ -15,26 +15,25 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // Sign up with email and password
-export async function signUpWithEmail(email, password, name, role) {
+export async function signUpWithEmail(name, email, password, role, roleData = {}) {
   try {
-    // Create user with email/password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Update user profile with display name
     await updateProfile(user, {
       displayName: name
     });
     
-    // Store role in Firestore
-    await setDoc(doc(db, 'users', user.uid), {
+    const userData = {
       name: name,
       email: email,
       role: role,
-      createdAt: serverTimestamp()
-    });
+      createdAt: serverTimestamp(),
+      ...roleData
+    };
     
-    // Also store role in localStorage for quick access
+    await setDoc(doc(db, 'users', user.uid), userData);
+    
     localStorage.setItem('userRole', role);
     localStorage.setItem('userName', name);
     
@@ -64,14 +63,12 @@ export async function signInWithEmail(email, password) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Get user role from Firestore
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     if (userDoc.exists()) {
       const userData = userDoc.data();
       localStorage.setItem('userRole', userData.role);
       localStorage.setItem('userName', userData.name || user.displayName || '');
     } else {
-      // Fallback: try to get from user metadata or set default
       localStorage.setItem('userName', user.displayName || '');
     }
     
@@ -120,7 +117,7 @@ export function isAuthenticated() {
   return auth.currentUser !== null;
 }
 
-// Get user role from localStorage (set after login)
+// Get user role from localStorage
 export function getUserRole() {
   return localStorage.getItem('userRole');
 }
@@ -130,11 +127,24 @@ export function getUserName() {
   return localStorage.getItem('userName') || (auth.currentUser && auth.currentUser.displayName) || '';
 }
 
+// Get user profile from Firestore - ADDED THIS FUNCTION
+export async function getUserProfile(uid) {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    if (userDoc.exists()) {
+      return userDoc.data();
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return null;
+  }
+}
+
 // Listen to auth state changes
 export function onAuthStateChanged(callback) {
   return firebaseOnAuthStateChanged(auth, async (user) => {
     if (user) {
-      // Get user role from Firestore
       try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {

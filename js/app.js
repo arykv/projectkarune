@@ -50,20 +50,38 @@ export function showToast(message, type = 'success') {
 }
 
 // Animate counter
-export function animateCounter(element, start, end, duration) {
-  const range = end - start;
+export function animateCounter(element, target, duration = 2000) {
+  const start = 0;
+  const range = target - start;
   const increment = range / (duration / 16);
   let current = start;
   
   const timer = setInterval(() => {
     current += increment;
-    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
-      element.textContent = formatNumber(Math.round(end));
+    if (current >= target) {
+      element.textContent = formatNumber(Math.round(target));
       clearInterval(timer);
     } else {
       element.textContent = formatNumber(Math.round(current));
     }
   }, 16);
+}
+
+// Update progress bar - ADDED THIS FUNCTION
+export function updateProgress(id, current, total) {
+  const percentage = Math.min(Math.round((current / total) * 100), 100);
+  const percentElement = document.getElementById(`${id}-percent`);
+  const barElement = document.getElementById(`${id}-bar`);
+  
+  if (percentElement) {
+    percentElement.textContent = `${percentage}%`;
+  }
+  
+  if (barElement) {
+    setTimeout(() => {
+      barElement.style.width = `${percentage}%`;
+    }, 100);
+  }
 }
 
 // Load JSON data
@@ -74,6 +92,6 @@ export async function loadJSON(path) {
     return await response.json();
   } catch (error) {
     console.error('Error loading JSON:', error);
-    return [];
+    return {};
   }
 }
