@@ -1,214 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impact — Karune Connect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Impact — Karune Connect</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="index.html" class="text-2xl font-bold text-blue-600">Karune Connect</a>
-                    <div class="hidden md:flex space-x-4">
-                        <a href="impact.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Impact</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
-                    <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Get Started</a>
-                </div>
-            </div>
+
+<body class="min-h-screen">
+
+<!-- ================= NAVBAR ================= -->
+<nav class="fixed top-0 inset-x-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center text-black font-bold">
+        ♥
+      </div>
+      <span class="text-xl font-semibold">Karune<span class="text-cyan-400">Connect</span></span>
+    </div>
+
+    <div class="flex items-center space-x-8">
+      <a href="index.html">Home</a>
+      <a href="impact.html" class="text-white">Impact</a>
+      <a href="register.html" class="btn-primary px-5 py-2 text-sm">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section class="relative pt-40 pb-28 overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-cyan-400/20 blur-[160px]"></div>
+  </div>
+
+  <div class="relative max-w-4xl mx-auto text-center px-6">
+    <h1 class="text-5xl md:text-6xl font-bold mb-6">
+      Transparency in
+      <span class="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
+        Action
+      </span>
+    </h1>
+    <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+      Every contribution is tracked, verified, and reflected in real impact —
+      because trust is built with visibility.
+    </p>
+  </div>
+</section>
+
+<!-- ================= STATS GRID ================= -->
+<section class="pb-28">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+
+      <div class="glass-card rounded-2xl p-8 text-center card-hover">
+        <div class="text-5xl font-bold text-cyan-400 mb-2" id="meals-stat">0</div>
+        <div class="text-slate-400">Meals Served</div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-8 text-center card-hover">
+        <div class="text-5xl font-bold text-cyan-400 mb-2" id="volunteers-stat">0</div>
+        <div class="text-slate-400">Active Volunteers</div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-8 text-center card-hover">
+        <div class="text-5xl font-bold text-cyan-400 mb-2" id="shelters-stat">0</div>
+        <div class="text-slate-400">Shelters Connected</div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-8 text-center card-hover">
+        <div class="text-5xl font-bold text-cyan-400 mb-2" id="families-stat">0</div>
+        <div class="text-slate-400">Families Helped</div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-8 text-center card-hover">
+        <div class="text-5xl font-bold text-cyan-400 mb-2" id="clothing-stat">0</div>
+        <div class="text-slate-400">Clothing Items</div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-8 text-center card-hover">
+        <div class="text-5xl font-bold text-cyan-400 mb-2" id="education-stat">0</div>
+        <div class="text-slate-400">Education Hours</div>
+      </div>
+
+    </div>
+
+    <!-- ================= PROGRESS ================= -->
+    <div class="glass-card rounded-2xl p-8 md:p-10 mb-20">
+      <h2 class="text-3xl font-bold mb-10 text-center">Impact Breakdown</h2>
+
+      <div class="space-y-8">
+
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="text-slate-300">Meals Served</span>
+            <span class="text-cyan-400 font-semibold" id="meals-percent">0%</span>
+          </div>
+          <div class="bg-white/10 rounded-full h-4 overflow-hidden">
+            <div id="meals-bar" class="bg-gradient-to-r from-cyan-400 to-teal-400 h-4 rounded-full progress-bar"></div>
+          </div>
         </div>
-    </nav>
 
-    <!-- Impact Header -->
-    <section class="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-5xl font-bold mb-4">Our Impact</h1>
-            <p class="text-2xl text-blue-100">Transparency in Action</p>
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="text-slate-300">Active Volunteers</span>
+            <span class="text-cyan-400 font-semibold" id="volunteers-percent">0%</span>
+          </div>
+          <div class="bg-white/10 rounded-full h-4 overflow-hidden">
+            <div id="volunteers-bar" class="bg-gradient-to-r from-cyan-400 to-teal-400 h-4 rounded-full progress-bar"></div>
+          </div>
         </div>
-    </section>
 
-    <!-- Statistics Grid -->
-    <section class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                <div class="bg-white rounded-lg shadow-lg p-8 text-center card-hover">
-                    <div class="bg-blue-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <div class="text-5xl font-bold text-blue-600 mb-2" id="meals-stat">0</div>
-                    <div class="text-xl text-gray-600">Meals Served</div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-lg p-8 text-center card-hover">
-                    <div class="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="text-5xl font-bold text-green-600 mb-2" id="volunteers-stat">0</div>
-                    <div class="text-xl text-gray-600">Active Volunteers</div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-lg p-8 text-center card-hover">
-                    <div class="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
-                    </div>
-                    <div class="text-5xl font-bold text-purple-600 mb-2" id="shelters-stat">0</div>
-                    <div class="text-xl text-gray-600">Shelters Connected</div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-lg p-8 text-center card-hover">
-                    <div class="bg-yellow-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="text-5xl font-bold text-yellow-600 mb-2" id="families-stat">0</div>
-                    <div class="text-xl text-gray-600">Families Helped</div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-lg p-8 text-center card-hover">
-                    <div class="bg-pink-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="text-5xl font-bold text-pink-600 mb-2" id="clothing-stat">0</div>
-                    <div class="text-xl text-gray-600">Clothing Items</div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-lg p-8 text-center card-hover">
-                    <div class="bg-indigo-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <div class="text-5xl font-bold text-indigo-600 mb-2" id="education-stat">0</div>
-                    <div class="text-xl text-gray-600">Educational Hours</div>
-                </div>
-            </div>
-
-            <!-- Progress Visualizations -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Impact Breakdown</h2>
-                
-                <div class="space-y-8">
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-lg font-semibold text-gray-700">Meals Served</span>
-                            <span class="text-lg font-bold text-blue-600" id="meals-percent">0%</span>
-                        </div>
-                        <div class="bg-gray-200 rounded-full h-4">
-                            <div class="bg-blue-600 h-4 rounded-full progress-bar" id="meals-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-lg font-semibold text-gray-700">Active Volunteers</span>
-                            <span class="text-lg font-bold text-green-600" id="volunteers-percent">0%</span>
-                        </div>
-                        <div class="bg-gray-200 rounded-full h-4">
-                            <div class="bg-green-600 h-4 rounded-full progress-bar" id="volunteers-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-lg font-semibold text-gray-700">Shelters Connected</span>
-                            <span class="text-lg font-bold text-purple-600" id="shelters-percent">0%</span>
-                        </div>
-                        <div class="bg-gray-200 rounded-full h-4">
-                            <div class="bg-purple-600 h-4 rounded-full progress-bar" id="shelters-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-lg font-semibold text-gray-700">Families Helped</span>
-                            <span class="text-lg font-bold text-yellow-600" id="families-percent">0%</span>
-                        </div>
-                        <div class="bg-gray-200 rounded-full h-4">
-                            <div class="bg-yellow-600 h-4 rounded-full progress-bar" id="families-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Call to Action -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg shadow-lg p-12 text-center text-white">
-                <h2 class="text-4xl font-bold mb-4">Join Us in Making a Difference</h2>
-                <p class="text-xl text-blue-100 mb-8">Be part of our growing community of changemakers</p>
-                <a href="register.html" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition text-lg inline-block">
-                    Get Started Today
-                </a>
-            </div>
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="text-slate-300">Shelters Connected</span>
+            <span class="text-cyan-400 font-semibold" id="shelters-percent">0%</span>
+          </div>
+          <div class="bg-white/10 rounded-full h-4 overflow-hidden">
+            <div id="shelters-bar" class="bg-gradient-to-r from-cyan-400 to-teal-400 h-4 rounded-full progress-bar"></div>
+          </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <p class="text-gray-400">&copy; 2024 Project Karune — Karune Connect. All rights reserved.</p>
-            </div>
+        <div>
+          <div class="flex justify-between mb-2">
+            <span class="text-slate-300">Families Helped</span>
+            <span class="text-cyan-400 font-semibold" id="families-percent">0%</span>
+          </div>
+          <div class="bg-white/10 rounded-full h-4 overflow-hidden">
+            <div id="families-bar" class="bg-gradient-to-r from-cyan-400 to-teal-400 h-4 rounded-full progress-bar"></div>
+          </div>
         </div>
-    </footer>
 
-    <script src="js/app.js"></script>
-    <script>
-        window.addEventListener('load', async () => {
-            const stats = await loadJSON('data/stats.json');
-            
-            // Animate counters
-            const mealsEl = document.getElementById('meals-stat');
-            const volunteersEl = document.getElementById('volunteers-stat');
-            const sheltersEl = document.getElementById('shelters-stat');
-            const familiesEl = document.getElementById('families-stat');
-            const clothingEl = document.getElementById('clothing-stat');
-            const educationEl = document.getElementById('education-stat');
-            
-            if (mealsEl) animateCounter(mealsEl, 0, stats.mealsServed, 2000);
-            if (volunteersEl) animateCounter(volunteersEl, 0, stats.volunteersActive, 2000);
-            if (sheltersEl) animateCounter(sheltersEl, 0, stats.sheltersConnected, 2000);
-            if (familiesEl) animateCounter(familiesEl, 0, stats.familiesHelped, 2000);
-            if (clothingEl) animateCounter(clothingEl, 0, stats.clothingItems, 2000);
-            if (educationEl) animateCounter(educationEl, 0, stats.educationalHours, 2000);
-            
-            // Calculate max values for progress bars (using arbitrary scales for visualization)
-            const maxMeals = 150000;
-            const maxVolunteers = 500;
-            const maxShelters = 30;
-            const maxFamilies = 4000;
-            
-            setTimeout(() => {
-                const mealsPercent = Math.min((stats.mealsServed / maxMeals) * 100, 100);
-                const volunteersPercent = Math.min((stats.volunteersActive / maxVolunteers) * 100, 100);
-                const sheltersPercent = Math.min((stats.sheltersConnected / maxShelters) * 100, 100);
-                const familiesPercent = Math.min((stats.familiesHelped / maxFamilies) * 100, 100);
-                
-                document.getElementById('meals-bar').style.width = mealsPercent + '%';
-                document.getElementById('volunteers-bar').style.width = volunteersPercent + '%';
-                document.getElementById('shelters-bar').style.width = sheltersPercent + '%';
-                document.getElementById('families-bar').style.width = familiesPercent + '%';
-                
-                document.getElementById('meals-percent').textContent = Math.round(mealsPercent) + '%';
-                document.getElementById('volunteers-percent').textContent = Math.round(volunteersPercent) + '%';
-                document.getElementById('shelters-percent').textContent = Math.round(sheltersPercent) + '%';
-                document.getElementById('families-percent').textContent = Math.round(familiesPercent) + '%';
-            }, 2100);
-        });
-    </script>
+      </div>
+    </div>
+
+    <!-- ================= CTA ================= -->
+    <div class="glass-card rounded-2xl p-12 text-center">
+      <h2 class="text-4xl font-bold mb-4">Be Part of the Impact</h2>
+      <p class="text-slate-400 max-w-xl mx-auto mb-8">
+        Join a growing community of sponsors, volunteers, and shelters
+        working together to create measurable change.
+      </p>
+      <a href="register.html" class="btn-primary px-8 py-4 text-lg">
+        Get Started Today
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="py-10 text-center text-sm text-slate-500">
+  © 2024 Project Karune. Made with ♥ for humanity.
+</footer>
+
+<!-- ================= JS (UNCHANGED) ================= -->
+<script src="js/app.js"></script>
+<script>
+  window.addEventListener('load', async () => {
+    const stats = await loadJSON('data/stats.json');
+
+    const map = [
+      ['meals', 'meals'],
+      ['volunteers', 'volunteers'],
+      ['shelters', 'shelters'],
+      ['families', 'families'],
+      ['clothing', 'clothing'],
+      ['education', 'education']
+    ];
+
+    map.forEach(([key, id]) => {
+      animateCounter(
+        document.getElementById(`${id}-stat`),
+        stats[key]
+      );
+    });
+
+    updateProgress('meals', stats.meals, 20000);
+    updateProgress('volunteers', stats.volunteers, 10000);
+    updateProgress('shelters', stats.shelters, 1000);
+    updateProgress('families', stats.families, 5000);
+  });
+</script>
+
 </body>
 </html>

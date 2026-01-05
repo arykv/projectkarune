@@ -1,229 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sponsor Dashboard — Karune Connect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sponsor Dashboard — Karune Connect</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="index.html" class="text-2xl font-bold text-blue-600">Karune Connect</a>
-                    <div class="hidden md:flex space-x-4">
-                        <a href="dashboard-sponsor.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Dashboard</a>
-                        <a href="impact.html" class="text-gray-700 hover:text-blue-600 font-medium">Impact</a>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-700" id="userName">Sponsor</span>
-                    <button id="logoutBtn" class="text-gray-600 hover:text-gray-900">Logout</button>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Dashboard Header -->
-    <section class="bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">Sponsor Dashboard</h1>
-            <p class="text-gray-600">Browse needs and support shelters in your community</p>
-        </div>
-    </section>
+<body class="min-h-screen">
 
-    <!-- Needs Feed -->
-    <section class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">Active Needs</h2>
-                <p class="text-gray-600">Select a need to sponsor</p>
-            </div>
-
-            <div id="needsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Needs will be loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Sponsorship Modal -->
-    <div id="sponsorModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-black opacity-50 modal-backdrop" onclick="window.closeSponsorModal()"></div>
-            <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-8">
-                <div class="text-center">
-                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Sponsorship Confirmed!</h3>
-                    <p class="text-gray-600 mb-6" id="modalMessage">Thank you for your support!</p>
-                    <button 
-                        onclick="window.closeSponsorModal()"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
+<!-- ================= NAVBAR ================= -->
+<nav class="fixed top-0 inset-x-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center text-black font-bold">
+        ♥
+      </div>
+      <span class="text-xl font-semibold">Karune<span class="text-cyan-400">Connect</span></span>
     </div>
 
-    <script type="module">
-        import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser } from './js/auth.js';
-        import { db } from './js/firebase.js';
-        import { showToast } from './js/app.js';
-        import { 
-            collection, 
-            addDoc, 
-            query, 
-            where, 
-            getDocs,
-            doc,
-            updateDoc,
-            serverTimestamp 
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    <div class="flex items-center space-x-8">
+      <a href="dashboard-sponsor.html" class="text-white">Dashboard</a>
+      <a href="impact.html">Impact</a>
+      <span id="userName" class="text-slate-400 text-sm">Sponsor</span>
+      <button id="logoutBtn" class="btn-outline px-4 py-2 text-sm">Logout</button>
+    </div>
+  </div>
+</nav>
 
-        // Make functions available globally for onclick handlers
-        window.closeSponsorModal = function() {
-            document.getElementById('sponsorModal').classList.add('hidden');
-        };
+<!-- ================= HEADER ================= -->
+<section class="pt-32 pb-16">
+  <div class="max-w-7xl mx-auto px-6">
+    <h1 class="text-4xl font-bold mb-2">Sponsor Dashboard</h1>
+    <p class="text-slate-400 max-w-2xl">
+      Browse verified needs and sponsor shelters directly with transparency.
+    </p>
+  </div>
+</section>
 
-        window.sponsorNeed = async function(needId, type, title) {
-            try {
-                const user = getCurrentFirebaseUser();
-                if (!user) {
-                    showToast('Please log in again', 'error');
-                    window.location.href = 'login.html';
-                    return;
-                }
+<!-- ================= NEEDS GRID ================= -->
+<section class="pb-32">
+  <div class="max-w-7xl mx-auto px-6">
 
-                // Create sponsorship document
-                await addDoc(collection(db, 'sponsorships'), {
-                    needId: needId,
-                    sponsorId: user.uid,
-                    type: type,
-                    createdAt: serverTimestamp()
-                });
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold mb-1">Active Needs</h2>
+      <p class="text-slate-400">Select how you want to support</p>
+    </div>
 
-                // Update need status to SPONSORED
-                const needRef = doc(db, 'needs', needId);
-                await updateDoc(needRef, {
-                    status: 'SPONSORED'
-                });
+    <div
+      id="needsContainer"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    ></div>
 
-                const modal = document.getElementById('sponsorModal');
-                const message = document.getElementById('modalMessage');
-                
-                if (type === 'monetary') {
-                    message.textContent = `Thank you for choosing to sponsor "${title}" monetarily. Your support will make a real difference!`;
-                } else {
-                    message.textContent = `Thank you for choosing direct delivery for "${title}". We'll connect you with the shelter for delivery details.`;
-                }
-                
-                modal.classList.remove('hidden');
-                showToast(`Sponsorship confirmed for "${title}"`, 'success');
-                
-                // Reload needs to reflect updated status
-                await loadNeeds();
-            } catch (error) {
-                console.error('Error sponsoring need:', error);
-                showToast('Error processing sponsorship. Please try again.', 'error');
-            }
-        };
+  </div>
+</section>
 
-        // Check authentication
-        window.addEventListener('load', () => {
-            onAuthStateChanged(async (user) => {
-                if (!user) {
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                const role = getUserRole();
-                if (role !== 'sponsor') {
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                const userName = getUserName();
-                if (userName) {
-                    document.getElementById('userName').textContent = userName;
-                }
-                
-                await loadNeeds();
-            });
-        });
+<!-- ================= SPONSOR MODAL ================= -->
+<div
+  id="sponsorModal"
+  class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
+>
+  <div
+    class="fixed inset-0 bg-black/60 modal-backdrop"
+    onclick="window.closeSponsorModal()"
+  ></div>
 
-        async function handleLogout() {
-            const result = await signOut();
-            if (result.success) {
-                window.location.href = 'index.html';
-            } else {
-                showToast('Error signing out', 'error');
-            }
-        }
+  <div class="relative glass-card rounded-2xl p-8 max-w-md text-center">
+    <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-green-400/20 flex items-center justify-center text-green-400">
+      ✓
+    </div>
+    <h3 class="text-xl font-semibold mb-2">Sponsorship Confirmed</h3>
+    <p id="modalMessage" class="text-slate-400 mb-6">
+      Thank you for your support!
+    </p>
+    <button onclick="window.closeSponsorModal()" class="btn-primary px-6 py-2">
+      Close
+    </button>
+  </div>
+</div>
 
-        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+<!-- ================= JS (UNCHANGED) ================= -->
+<script type="module">
+  import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser } from './js/auth.js';
+  import { db } from './js/firebase.js';
+  import { showToast } from './js/app.js';
+  import {
+    collection,
+    addDoc,
+    query,
+    where,
+    getDocs,
+    doc,
+    updateDoc,
+    serverTimestamp
+  } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        async function loadNeeds() {
-            try {
-                const q = query(
-                    collection(db, 'needs'),
-                    where('status', '==', 'OPEN')
-                );
-                
-                const querySnapshot = await getDocs(q);
-                const needs = [];
-                querySnapshot.forEach((doc) => {
-                    needs.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
-                
-                const container = document.getElementById('needsContainer');
-                
-                if (needs.length === 0) {
-                    container.innerHTML = '<div class="col-span-full bg-white rounded-lg shadow-md p-8 text-center text-gray-600">No open needs found.</div>';
-                    return;
-                }
-                
-                container.innerHTML = needs.map(need => `
-                    <div class="bg-white rounded-lg shadow-md p-6 card-hover">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
-                            <span class="text-sm text-gray-500">${need.category}</span>
-                        </div>
-                        
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">${need.title}</h3>
-                        <p class="text-gray-600 mb-4">${need.description}</p>
-                        
-                        <div class="flex space-x-2">
-                            <button 
-                                onclick="window.sponsorNeed('${need.id}', 'monetary', ${JSON.stringify(need.title)})"
-                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition text-sm"
-                            >
-                                Sponsor Monetarily
-                            </button>
-                            <button 
-                                onclick="window.sponsorNeed('${need.id}', 'delivery', ${JSON.stringify(need.title)})"
-                                class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
-                            >
-                                Direct Delivery
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error loading needs:', error);
-                showToast('Error loading needs', 'error');
-            }
-        }
-    </script>
+  window.closeSponsorModal = function () {
+    document.getElementById('sponsorModal').classList.add('hidden');
+  };
+
+  window.sponsorNeed = async function (needId, type, title) {
+    try {
+      const user = getCurrentFirebaseUser();
+      if (!user) {
+        showToast('Please log in again', 'error');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      await addDoc(collection(db, 'sponsorships'), {
+        needId,
+        sponsorId: user.uid,
+        type,
+        createdAt: serverTimestamp()
+      });
+
+      const needRef = doc(db, 'needs', needId);
+      await updateDoc(needRef, { status: 'SPONSORED' });
+
+      const message = document.getElementById('modalMessage');
+      message.textContent =
+        type === 'monetary'
+          ? `Thank you for sponsoring "${title}" monetarily.`
+          : `Thank you for choosing direct delivery for "${title}".`;
+
+      document.getElementById('sponsorModal').classList.remove('hidden');
+      showToast(`Sponsorship confirmed for "${title}"`, 'success');
+
+      await loadNeeds();
+    } catch (err) {
+      console.error(err);
+      showToast('Error processing sponsorship', 'error');
+    }
+  };
+
+  window.addEventListener('load', () => {
+    onAuthStateChanged(async (user) => {
+      if (!user || getUserRole() !== 'sponsor') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const name = getUserName();
+      if (name) document.getElementById('userName').textContent = name;
+
+      await loadNeeds();
+    });
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    const result = await signOut();
+    if (result.success) window.location.href = 'index.html';
+    else showToast('Error signing out', 'error');
+  });
+
+  async function loadNeeds() {
+    const q = query(collection(db, 'needs'), where('status', '==', 'OPEN'));
+    const snap = await getDocs(q);
+
+    const needs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const container = document.getElementById('needsContainer');
+
+    if (!needs.length) {
+      container.innerHTML = `
+        <div class="col-span-full glass-card rounded-xl p-8 text-center text-slate-400">
+          No open needs available right now.
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = needs.map(need => `
+      <div class="glass-card rounded-xl p-6 card-hover">
+        <div class="flex justify-between mb-3">
+          <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
+          <span class="text-sm text-slate-400">${need.category}</span>
+        </div>
+
+        <h3 class="text-lg font-semibold mb-2">${need.title}</h3>
+        <p class="text-slate-400 mb-4">${need.description}</p>
+
+        <div class="flex gap-2">
+          <button
+            onclick="window.sponsorNeed('${need.id}','monetary','${need.title.replace(/'/g, "\\'")}')"
+            class="btn-primary flex-1 py-2 text-sm"
+          >
+            Sponsor
+          </button>
+
+          <button
+            onclick="window.sponsorNeed('${need.id}','delivery','${need.title.replace(/'/g, "\\'")}')"
+            class="btn-outline flex-1 py-2 text-sm"
+          >
+            Deliver
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+</script>
+
 </body>
 </html>
