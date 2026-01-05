@@ -5,16 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register — Karune Connect</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Custom Styles -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body class="min-h-screen flex flex-col">
 
-<!-- ================= NAVBAR ================= -->
+<!-- NAVBAR -->
 <nav class="fixed top-0 inset-x-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
     <div class="flex items-center space-x-3">
@@ -31,7 +28,7 @@
   </div>
 </nav>
 
-<!-- ================= REGISTER SECTION ================= -->
+<!-- REGISTER SECTION -->
 <main class="flex-1 flex items-center justify-center px-6 pt-32 pb-24 relative overflow-hidden">
 
   <!-- Glow -->
@@ -50,7 +47,7 @@
       <p class="text-slate-400">Create your account and start making a difference</p>
     </div>
 
-    <form id="registerForm" class="space-y-8">
+    <form id="registerForm" class="space-y-6">
 
       <!-- Name -->
       <div>
@@ -138,6 +135,172 @@
         </div>
       </div>
 
+      <!-- SHELTER SPECIFIC FIELDS -->
+      <div id="shelterFields" class="hidden space-y-4 pt-4 border-t border-slate-700">
+        <h3 class="text-lg font-semibold text-slate-300">Shelter Details</h3>
+        
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Shelter Type</label>
+          <select name="shelterType" class="w-full px-4 py-3 rounded-lg">
+            <option value="">Select type</option>
+            <option value="orphanage">Orphanage</option>
+            <option value="old-age-home">Old Age Home</option>
+            <option value="community">Community Shelter</option>
+            <option value="rehabilitation">Rehabilitation Center</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Number of Beneficiaries</label>
+          <input type="number" name="beneficiaryCount" placeholder="e.g. 50" class="w-full px-4 py-3 rounded-lg" />
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Age Group</label>
+          <select name="ageGroup" class="w-full px-4 py-3 rounded-lg">
+            <option value="">Select age group</option>
+            <option value="children">Children (0-18)</option>
+            <option value="adults">Adults (18-60)</option>
+            <option value="elderly">Elderly (60+)</option>
+            <option value="mixed">Mixed Ages</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Contact Phone</label>
+          <input type="tel" name="contactPhone" placeholder="+91 XXXXX XXXXX" class="w-full px-4 py-3 rounded-lg" />
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">City</label>
+          <input type="text" name="city" placeholder="e.g. Mumbai" class="w-full px-4 py-3 rounded-lg" />
+        </div>
+      </div>
+
+      <!-- SPONSOR SPECIFIC FIELDS -->
+      <div id="sponsorFields" class="hidden space-y-4 pt-4 border-t border-slate-700">
+        <h3 class="text-lg font-semibold text-slate-300">Sponsor Profile</h3>
+        
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Organization Type</label>
+          <select name="orgType" class="w-full px-4 py-3 rounded-lg">
+            <option value="">Select type</option>
+            <option value="individual">Individual</option>
+            <option value="corporate">Corporate/CSR</option>
+            <option value="foundation">Foundation</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Preferred Categories</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="preferredCategories" value="Food" class="w-4 h-4 rounded" />
+              <span class="text-sm">Food</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="preferredCategories" value="Clothing" class="w-4 h-4 rounded" />
+              <span class="text-sm">Clothing</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="preferredCategories" value="Education" class="w-4 h-4 rounded" />
+              <span class="text-sm">Education</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="preferredCategories" value="Healthcare" class="w-4 h-4 rounded" />
+              <span class="text-sm">Healthcare</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="preferredCategories" value="Essentials" class="w-4 h-4 rounded" />
+              <span class="text-sm">Essentials</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Donation Type</label>
+          <select name="donationType" class="w-full px-4 py-3 rounded-lg">
+            <option value="">Select type</option>
+            <option value="monetary">Monetary</option>
+            <option value="goods">Goods/Materials</option>
+            <option value="both">Both</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">City</label>
+          <input type="text" name="city" placeholder="e.g. Delhi" class="w-full px-4 py-3 rounded-lg" />
+        </div>
+      </div>
+
+      <!-- VOLUNTEER SPECIFIC FIELDS -->
+      <div id="volunteerFields" class="hidden space-y-4 pt-4 border-t border-slate-700">
+        <h3 class="text-lg font-semibold text-slate-300">Volunteer Profile</h3>
+        
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Skills</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="teaching" class="w-4 h-4 rounded" />
+              <span class="text-sm">Teaching/Tutoring</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="healthcare" class="w-4 h-4 rounded" />
+              <span class="text-sm">Healthcare/Medical</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="cooking" class="w-4 h-4 rounded" />
+              <span class="text-sm">Cooking</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="counseling" class="w-4 h-4 rounded" />
+              <span class="text-sm">Counseling</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="delivery" class="w-4 h-4 rounded" />
+              <span class="text-sm">Delivery/Logistics</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="administration" class="w-4 h-4 rounded" />
+              <span class="text-sm">Administration</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="mentoring" class="w-4 h-4 rounded" />
+              <span class="text-sm">Mentoring</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="skills" value="technical" class="w-4 h-4 rounded" />
+              <span class="text-sm">Technical/IT</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Availability</label>
+          <select name="availability" class="w-full px-4 py-3 rounded-lg">
+            <option value="">Select availability</option>
+            <option value="weekdays">Weekdays</option>
+            <option value="weekends">Weekends</option>
+            <option value="flexible">Flexible</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">Preferred Age Group</label>
+          <select name="preferredAgeGroup" class="w-full px-4 py-3 rounded-lg">
+            <option value="">Select preference</option>
+            <option value="children">Children</option>
+            <option value="elderly">Elderly</option>
+            <option value="any">Any Age Group</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-2 text-slate-300">City</label>
+          <input type="text" name="city" placeholder="e.g. Bangalore" class="w-full px-4 py-3 rounded-lg" />
+        </div>
+      </div>
+
       <!-- Error -->
       <div
         id="errorMessage"
@@ -162,24 +325,43 @@
   </div>
 </main>
 
-<!-- ================= FOOTER ================= -->
+<!-- FOOTER -->
 <footer class="py-6 text-center text-xs text-slate-500">
   © 2024 Project Karune. Made with ♥ for humanity.
 </footer>
 
-<!-- ================= JS (UNCHANGED) ================= -->
 <script type="module">
   import { signUpWithEmail } from './js/auth.js';
   import { showToast } from './js/app.js';
 
   const urlParams = new URLSearchParams(window.location.search);
-const roleParam = urlParams.get('role');
+  const roleParam = urlParams.get('role');
 
-if (roleParam) {
-  const roleInput = document.querySelector(`input[value="${roleParam}"]`);
-  if (roleInput) roleInput.checked = true;
-}
+  if (roleParam) {
+    const roleInput = document.querySelector(`input[value="${roleParam}"]`);
+    if (roleInput) {
+      roleInput.checked = true;
+      roleInput.dispatchEvent(new Event('change'));
+    }
+  }
 
+  // Show/hide role-specific fields
+  document.querySelectorAll('input[name="role"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      document.getElementById('shelterFields').classList.add('hidden');
+      document.getElementById('sponsorFields').classList.add('hidden');
+      document.getElementById('volunteerFields').classList.add('hidden');
+
+      const role = e.target.value;
+      if (role === 'shelter') {
+        document.getElementById('shelterFields').classList.remove('hidden');
+      } else if (role === 'sponsor') {
+        document.getElementById('sponsorFields').classList.remove('hidden');
+      } else if (role === 'volunteer') {
+        document.getElementById('volunteerFields').classList.remove('hidden');
+      }
+    });
+  });
 
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -197,7 +379,35 @@ if (roleParam) {
     const password = formData.get('password');
     const role = formData.get('role');
 
-    const result = await signUpWithEmail(name, email, password, role);
+    let roleData = {};
+    
+    if (role === 'shelter') {
+      roleData = {
+        shelterType: formData.get('shelterType'),
+        beneficiaryCount: parseInt(formData.get('beneficiaryCount')) || 0,
+        ageGroup: formData.get('ageGroup'),
+        contactPhone: formData.get('contactPhone'),
+        city: formData.get('city')
+      };
+    } else if (role === 'sponsor') {
+      const categories = formData.getAll('preferredCategories');
+      roleData = {
+        orgType: formData.get('orgType'),
+        preferredCategories: categories,
+        donationType: formData.get('donationType'),
+        city: formData.get('city')
+      };
+    } else if (role === 'volunteer') {
+      const skills = formData.getAll('skills');
+      roleData = {
+        skills: skills,
+        availability: formData.get('availability'),
+        preferredAgeGroup: formData.get('preferredAgeGroup'),
+        city: formData.get('city')
+      };
+    }
+
+    const result = await signUpWithEmail(name, email, password, role, roleData);
 
     if (result.success) {
       showToast('Account created successfully!', 'success');

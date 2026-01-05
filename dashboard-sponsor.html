@@ -11,7 +11,7 @@
 
 <body class="min-h-screen">
 
-<!-- ================= NAVBAR ================= -->
+<!-- NAVBAR -->
 <nav class="fixed top-0 inset-x-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
     <div class="flex items-center space-x-3">
@@ -30,7 +30,7 @@
   </div>
 </nav>
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <section class="pt-32 pb-16">
   <div class="max-w-7xl mx-auto px-6">
     <h1 class="text-4xl font-bold mb-2">Sponsor Dashboard</h1>
@@ -40,24 +40,82 @@
   </div>
 </section>
 
-<!-- ================= NEEDS GRID ================= -->
+<!-- FILTERS -->
+<section class="pb-8">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="glass-card rounded-xl p-6">
+      <h3 class="text-lg font-semibold mb-4">Filter Needs</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Category Filter -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Category</label>
+          <select id="filterCategory" class="w-full px-4 py-2 rounded-lg">
+            <option value="">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Education">Education</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Essentials">Essentials</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Urgency Filter -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Urgency</label>
+          <select id="filterUrgency" class="w-full px-4 py-2 rounded-lg">
+            <option value="">All Urgency Levels</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+
+        <!-- Sort By -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Sort By</label>
+          <select id="sortBy" class="w-full px-4 py-2 rounded-lg">
+            <option value="match">Best Match</option>
+            <option value="urgency">Urgency</option>
+            <option value="recent">Most Recent</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="applyFilters" class="btn-primary px-6 py-2 text-sm mt-4">
+        Apply Filters
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- NEEDS GRID -->
 <section class="pb-32">
   <div class="max-w-7xl mx-auto px-6">
 
     <div class="mb-8">
-      <h2 class="text-2xl font-semibold mb-1">Active Needs</h2>
-      <p class="text-slate-400">Select how you want to support</p>
+      <h2 class="text-2xl font-semibold mb-1">Recommended For You</h2>
+      <p class="text-slate-400">Needs matched based on your preferences and location</p>
     </div>
 
+    <!-- Loading State -->
+    <div id="loadingState" class="glass-card rounded-xl p-8 text-center">
+      <div class="animate-pulse">
+        <div class="text-slate-400">Loading needs...</div>
+      </div>
+    </div>
+
+    <!-- Needs Container -->
     <div
       id="needsContainer"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     ></div>
 
   </div>
 </section>
 
-<!-- ================= SPONSOR MODAL ================= -->
+<!-- SPONSOR MODAL -->
 <div
   id="sponsorModal"
   class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
@@ -81,11 +139,11 @@
   </div>
 </div>
 
-<!-- ================= JS (UNCHANGED) ================= -->
 <script type="module">
-  import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser } from './js/auth.js';
+  import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser, getUserProfile } from './js/auth.js';
   import { db } from './js/firebase.js';
   import { showToast } from './js/app.js';
+  import { getRecommendedNeeds, getMatchPercentage } from './js/matching.js';
   import {
     collection,
     addDoc,
@@ -94,8 +152,13 @@
     getDocs,
     doc,
     updateDoc,
-    serverTimestamp
+    serverTimestamp,
+    orderBy
   } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+  let userProfile = null;
+  let allNeeds = [];
+  let filteredNeeds = [];
 
   window.closeSponsorModal = function () {
     document.getElementById('sponsorModal').classList.add('hidden');
@@ -110,15 +173,22 @@
         return;
       }
 
+      // Create sponsorship record
       await addDoc(collection(db, 'sponsorships'), {
         needId,
         sponsorId: user.uid,
+        sponsorName: userProfile?.name || 'Anonymous',
         type,
         createdAt: serverTimestamp()
       });
 
+      // Update need status
       const needRef = doc(db, 'needs', needId);
-      await updateDoc(needRef, { status: 'SPONSORED' });
+      await updateDoc(needRef, { 
+        status: 'SPONSORED',
+        sponsoredAt: serverTimestamp(),
+        sponsorId: user.uid
+      });
 
       const message = document.getElementById('modalMessage');
       message.textContent =
@@ -129,10 +199,11 @@
       document.getElementById('sponsorModal').classList.remove('hidden');
       showToast(`Sponsorship confirmed for "${title}"`, 'success');
 
+      // Reload needs after sponsorship
       await loadNeeds();
     } catch (err) {
-      console.error(err);
-      showToast('Error processing sponsorship', 'error');
+      console.error('Sponsorship error:', err);
+      showToast('Error processing sponsorship: ' + err.message, 'error');
     }
   };
 
@@ -146,7 +217,15 @@
       const name = getUserName();
       if (name) document.getElementById('userName').textContent = name;
 
-      await loadNeeds();
+      try {
+        userProfile = await getUserProfile(user.uid);
+        console.log('User profile loaded:', userProfile);
+        await loadNeeds();
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        showToast('Error loading profile', 'error');
+        await loadNeeds(); // Load anyway without recommendations
+      }
     });
   });
 
@@ -156,48 +235,176 @@
     else showToast('Error signing out', 'error');
   });
 
-  async function loadNeeds() {
-    const q = query(collection(db, 'needs'), where('status', '==', 'OPEN'));
-    const snap = await getDocs(q);
+  // Apply filters
+  document.getElementById('applyFilters').addEventListener('click', () => {
+    applyFilters();
+  });
 
-    const needs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  async function loadNeeds() {
+    const loadingState = document.getElementById('loadingState');
     const container = document.getElementById('needsContainer');
+    
+    loadingState.classList.remove('hidden');
+    container.classList.add('hidden');
+
+    try {
+      const q = query(
+        collection(db, 'needs'), 
+        where('status', '==', 'OPEN'),
+        orderBy('createdAt', 'desc')
+      );
+      const snap = await getDocs(q);
+
+      allNeeds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      console.log(`Loaded ${allNeeds.length} open needs`);
+      
+      // Apply recommendations if profile exists
+      if (userProfile && userProfile.city && userProfile.preferredCategories) {
+        console.log('Applying recommendations...');
+        const recommended = await getRecommendedNeeds(allNeeds, userProfile, 'sponsor');
+        filteredNeeds = recommended;
+      } else {
+        console.log('No complete profile - showing all needs');
+        filteredNeeds = allNeeds;
+      }
+
+      applyFilters();
+      
+    } catch (err) {
+      console.error('Error loading needs:', err);
+      
+      // Fallback query without orderBy
+      try {
+        const q2 = query(collection(db, 'needs'), where('status', '==', 'OPEN'));
+        const snap2 = await getDocs(q2);
+        allNeeds = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+        filteredNeeds = allNeeds;
+        applyFilters();
+      } catch (err2) {
+        console.error('Fallback query failed:', err2);
+        loadingState.innerHTML = `
+          <div class="text-red-400">
+            Error loading needs. Please refresh the page.
+          </div>`;
+        showToast('Error loading needs', 'error');
+      }
+    }
+  }
+
+  function applyFilters() {
+    const category = document.getElementById('filterCategory').value;
+    const urgency = document.getElementById('filterUrgency').value;
+    const sortBy = document.getElementById('sortBy').value;
+
+    let filtered = [...filteredNeeds];
+
+    // Apply category filter
+    if (category) {
+      filtered = filtered.filter(n => n.category === category);
+    }
+
+    // Apply urgency filter
+    if (urgency) {
+      filtered = filtered.filter(n => n.urgency === urgency);
+    }
+
+    // Apply sorting
+    if (sortBy === 'urgency') {
+      const urgencyOrder = { high: 3, medium: 2, low: 1 };
+      filtered.sort((a, b) => 
+        (urgencyOrder[b.urgency] || 0) - (urgencyOrder[a.urgency] || 0)
+      );
+    } else if (sortBy === 'recent') {
+      filtered.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
+    }
+    // 'match' sorting is default from recommendations
+
+    renderNeeds(filtered);
+  }
+
+  function renderNeeds(needs) {
+    const loadingState = document.getElementById('loadingState');
+    const container = document.getElementById('needsContainer');
+    
+    loadingState.classList.add('hidden');
+    container.classList.remove('hidden');
 
     if (!needs.length) {
       container.innerHTML = `
         <div class="col-span-full glass-card rounded-xl p-8 text-center text-slate-400">
-          No open needs available right now.
+          No needs match your current filters. Try adjusting your selection.
         </div>`;
       return;
     }
 
-    container.innerHTML = needs.map(need => `
-      <div class="glass-card rounded-xl p-6 card-hover">
-        <div class="flex justify-between mb-3">
-          <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
-          <span class="text-sm text-slate-400">${need.category}</span>
+    const urgencyColors = {
+      high: 'text-red-400',
+      medium: 'text-yellow-400',
+      low: 'text-green-400'
+    };
+
+    container.innerHTML = needs.map(need => {
+      const matchScore = need.scoring ? getMatchPercentage(need.scoring.score) : 0;
+      const hasScoring = need.scoring && need.scoring.score > 0;
+      const urgencyColor = urgencyColors[need.urgency] || urgencyColors.low;
+
+      return `
+        <div class="glass-card rounded-xl p-6 card-hover relative">
+          ${hasScoring ? `
+            <div class="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 text-black text-xs font-bold">
+              ${matchScore}% Match
+            </div>
+          ` : ''}
+
+          <div class="flex justify-between mb-3 ${hasScoring ? 'pr-20' : ''}">
+            <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
+            <span class="text-sm text-slate-400">${need.category}</span>
+          </div>
+
+          <h3 class="text-lg font-semibold mb-2">${need.title}</h3>
+          <p class="text-slate-400 mb-3 text-sm line-clamp-2">${need.description}</p>
+
+          <div class="flex items-center gap-2 text-xs mb-2">
+            <span class="${urgencyColor}">● ${need.urgency} urgency</span>
+            <span class="text-slate-500">•</span>
+            <span class="text-slate-400">${need.shelterCity || 'Location N/A'}</span>
+          </div>
+
+          <div class="text-xs text-slate-500 mb-4">
+            Posted by: ${need.shelterName || 'Anonymous Shelter'}
+          </div>
+
+          ${hasScoring ? `
+            <div class="bg-slate-800/50 rounded-lg p-3 mb-4 text-xs">
+              <p class="font-semibold mb-2 text-slate-300">Why recommended:</p>
+              <ul class="space-y-1 text-slate-400">
+                ${need.scoring.reasons.map(r => `<li>• ${r}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+
+          <div class="flex gap-2">
+            <button
+              onclick="window.sponsorNeed('${need.id}','monetary','${need.title.replace(/'/g, "\\'")}')"
+              class="btn-primary flex-1 py-2 text-sm"
+            >
+              Sponsor
+            </button>
+
+            <button
+              onclick="window.sponsorNeed('${need.id}','delivery','${need.title.replace(/'/g, "\\'")}')"
+              class="btn-outline flex-1 py-2 text-sm"
+            >
+              Deliver
+            </button>
+          </div>
         </div>
-
-        <h3 class="text-lg font-semibold mb-2">${need.title}</h3>
-        <p class="text-slate-400 mb-4">${need.description}</p>
-
-        <div class="flex gap-2">
-          <button
-            onclick="window.sponsorNeed('${need.id}','monetary','${need.title.replace(/'/g, "\\'")}')"
-            class="btn-primary flex-1 py-2 text-sm"
-          >
-            Sponsor
-          </button>
-
-          <button
-            onclick="window.sponsorNeed('${need.id}','delivery','${need.title.replace(/'/g, "\\'")}')"
-            class="btn-outline flex-1 py-2 text-sm"
-          >
-            Deliver
-          </button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 </script>
 

@@ -11,7 +11,7 @@
 
 <body class="min-h-screen">
 
-<!-- ================= NAVBAR ================= -->
+<!-- NAVBAR -->
 <nav class="fixed top-0 inset-x-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
     <div class="flex items-center space-x-3">
@@ -30,7 +30,7 @@
   </div>
 </nav>
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <section class="pt-32 pb-16">
   <div class="max-w-7xl mx-auto px-6">
     <h1 class="text-4xl font-bold mb-2">Shelter Dashboard</h1>
@@ -40,11 +40,11 @@
   </div>
 </section>
 
-<!-- ================= MAIN ================= -->
+<!-- MAIN -->
 <section class="pb-32">
   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-    <!-- ===== LEFT: POST FORM ===== -->
+    <!-- LEFT: POST FORM -->
     <div class="lg:col-span-1">
       <div class="glass-card rounded-2xl p-6 sticky top-28">
         <h2 class="text-xl font-semibold mb-6">Post a New Requirement</h2>
@@ -52,65 +52,124 @@
         <form id="requirementForm" class="space-y-5">
 
           <div>
-            <label class="text-sm text-slate-300 mb-1 block">Title</label>
-            <input id="title" name="title" required placeholder="e.g. Winter Clothing Drive" class="w-full px-4 py-3 rounded-lg" />
+            <label class="text-sm text-slate-300 mb-1 block">Title*</label>
+            <input 
+              id="title" 
+              name="title" 
+              required 
+              placeholder="e.g. Winter Clothing Drive" 
+              class="w-full px-4 py-3 rounded-lg" 
+              maxlength="100"
+            />
+            <p class="text-xs text-slate-500 mt-1">Clear, descriptive title</p>
           </div>
 
           <div>
-            <label class="text-sm text-slate-300 mb-1 block">Category</label>
+            <label class="text-sm text-slate-300 mb-1 block">Category*</label>
             <select id="category" name="category" required class="w-full px-4 py-3 rounded-lg">
               <option value="">Select category</option>
-              <option value="Food">Food</option>
-              <option value="Clothing">Clothing</option>
-              <option value="Education">Education</option>
-              <option value="Healthcare">Healthcare</option>
-              <option value="Essentials">Essentials</option>
+              <option value="Food">Food & Nutrition</option>
+              <option value="Clothing">Clothing & Apparel</option>
+              <option value="Education">Education & Learning</option>
+              <option value="Healthcare">Healthcare & Medicine</option>
+              <option value="Essentials">Daily Essentials</option>
               <option value="Other">Other</option>
             </select>
           </div>
 
           <div>
-            <label class="text-sm text-slate-300 mb-1 block">Description</label>
+            <label class="text-sm text-slate-300 mb-1 block">Urgency Level*</label>
+            <select id="urgency" name="urgency" required class="w-full px-4 py-3 rounded-lg">
+              <option value="">Select urgency</option>
+              <option value="low">Low - Can wait</option>
+              <option value="medium">Medium - Within days</option>
+              <option value="high">High - Urgent need</option>
+            </select>
+            <p class="text-xs text-slate-500 mt-1">How quickly do you need this?</p>
+          </div>
+
+          <div>
+            <label class="text-sm text-slate-300 mb-1 block">Support Type*</label>
+            <select id="supportType" name="supportType" required class="w-full px-4 py-3 rounded-lg">
+              <option value="">Select type</option>
+              <option value="donation">Monetary Donation</option>
+              <option value="volunteer">Volunteer Help</option>
+              <option value="both">Both Donation & Volunteers</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-sm text-slate-300 mb-1 block">Description*</label>
             <textarea
               id="description"
               name="description"
               rows="4"
               required
-              placeholder="Describe the requirement..."
+              placeholder="Describe what you need, quantity, and any specific requirements..."
               class="w-full px-4 py-3 rounded-lg"
+              maxlength="500"
             ></textarea>
+            <p class="text-xs text-slate-500 mt-1"><span id="charCount">0</span>/500 characters</p>
           </div>
 
           <button id="submitBtn" type="submit" class="btn-primary w-full py-3">
-            Post Requirement
+            📝 Post Requirement
           </button>
         </form>
       </div>
     </div>
 
-    <!-- ===== RIGHT: NEEDS ===== -->
+    <!-- RIGHT: NEEDS -->
     <div class="lg:col-span-2">
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="glass-card rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-cyan-400" id="openCount">0</div>
+          <div class="text-xs text-slate-400 mt-1">Open</div>
+        </div>
+        <div class="glass-card rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-yellow-400" id="sponsoredCount">0</div>
+          <div class="text-xs text-slate-400 mt-1">Sponsored</div>
+        </div>
+        <div class="glass-card rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-green-400" id="completedCount">0</div>
+          <div class="text-xs text-slate-400 mt-1">Completed</div>
+        </div>
+      </div>
 
       <!-- Filters -->
       <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <h2 class="text-2xl font-semibold">Your Requirements</h2>
 
         <div class="flex gap-2">
-          <button onclick="window.filterNeeds('all')" data-filter="all" class="filter-btn px-4 py-2 text-sm">All</button>
-          <button onclick="window.filterNeeds('OPEN')" data-filter="OPEN" class="filter-btn px-4 py-2 text-sm">Open</button>
-          <button onclick="window.filterNeeds('SPONSORED')" data-filter="SPONSORED" class="filter-btn px-4 py-2 text-sm">Sponsored</button>
-          <button onclick="window.filterNeeds('COMPLETED')" data-filter="COMPLETED" class="filter-btn px-4 py-2 text-sm">Completed</button>
+          <button onclick="window.filterNeeds('all')" data-filter="all" class="filter-btn active px-4 py-2 text-sm">
+            All
+          </button>
+          <button onclick="window.filterNeeds('OPEN')" data-filter="OPEN" class="filter-btn px-4 py-2 text-sm">
+            Open
+          </button>
+          <button onclick="window.filterNeeds('SPONSORED')" data-filter="SPONSORED" class="filter-btn px-4 py-2 text-sm">
+            Sponsored
+          </button>
+          <button onclick="window.filterNeeds('COMPLETED')" data-filter="COMPLETED" class="filter-btn px-4 py-2 text-sm">
+            Completed
+          </button>
         </div>
       </div>
 
       <!-- Needs List -->
-      <div id="needsContainer" class="space-y-4"></div>
+      <div id="needsContainer" class="space-y-4">
+        <div class="glass-card rounded-xl p-8 text-center text-slate-400">
+          Loading your requirements...
+        </div>
+      </div>
 
     </div>
   </div>
 </section>
 
-<!-- ================= SUCCESS MODAL ================= -->
+<!-- SUCCESS MODAL -->
 <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
   <div class="fixed inset-0 bg-black/60 modal-backdrop" onclick="window.closeSuccessModal()"></div>
 
@@ -128,9 +187,28 @@
   </div>
 </div>
 
-<!-- ================= JS (UNCHANGED) ================= -->
+<!-- COMPLETE MODAL -->
+<div id="completeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+  <div class="fixed inset-0 bg-black/60 modal-backdrop" onclick="window.closeCompleteModal()"></div>
+
+  <div class="relative glass-card rounded-2xl p-8 max-w-md">
+    <h3 class="text-xl font-semibold mb-4">Mark as Completed?</h3>
+    <p class="text-slate-400 mb-6" id="completeMessage">
+      Are you sure this requirement has been fulfilled?
+    </p>
+    <div class="flex gap-3">
+      <button onclick="window.confirmComplete()" class="btn-primary flex-1 py-2">
+        Yes, Mark Complete
+      </button>
+      <button onclick="window.closeCompleteModal()" class="btn-outline flex-1 py-2">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
-  import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser } from './js/auth.js';
+  import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser, getUserProfile } from './js/auth.js';
   import { db } from './js/firebase.js';
   import { showToast } from './js/app.js';
   import {
@@ -139,11 +217,16 @@
     query,
     where,
     getDocs,
-    serverTimestamp
+    orderBy,
+    serverTimestamp,
+    doc,
+    updateDoc
   } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
   let allNeeds = [];
   let currentFilter = 'all';
+  let currentUser = null;
+  let needToComplete = null;
 
   window.filterNeeds = function(status) {
     currentFilter = status;
@@ -157,12 +240,49 @@
     document.getElementById('successModal').classList.add('hidden');
   };
 
+  window.closeCompleteModal = function() {
+    document.getElementById('completeModal').classList.add('hidden');
+    needToComplete = null;
+  };
+
+  window.openCompleteModal = function(needId, title) {
+    needToComplete = needId;
+    document.getElementById('completeMessage').textContent = 
+      `Mark "${title}" as completed? This action cannot be undone.`;
+    document.getElementById('completeModal').classList.remove('hidden');
+  };
+
+  window.confirmComplete = async function() {
+    if (!needToComplete) return;
+    
+    try {
+      const needRef = doc(db, 'needs', needToComplete);
+      await updateDoc(needRef, {
+        status: 'COMPLETED',
+        completedAt: serverTimestamp()
+      });
+      
+      showToast('Requirement marked as completed!', 'success');
+      window.closeCompleteModal();
+      await loadNeeds();
+    } catch (error) {
+      console.error('Error completing need:', error);
+      showToast('Error updating status', 'error');
+    }
+  };
+
+  // Character counter
+  document.getElementById('description').addEventListener('input', (e) => {
+    document.getElementById('charCount').textContent = e.target.value.length;
+  });
+
   window.addEventListener('load', () => {
     onAuthStateChanged(async (user) => {
       if (!user || getUserRole() !== 'shelter') {
         window.location.href = 'login.html';
         return;
       }
+      currentUser = user;
       const name = getUserName();
       if (name) document.getElementById('userName').textContent = name;
       await loadNeeds();
@@ -175,14 +295,106 @@
     else showToast('Error signing out', 'error');
   });
 
+  document.getElementById('requirementForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const user = getCurrentFirebaseUser();
+    if (!user) {
+      showToast('Please log in again', 'error');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Posting...';
+
+    try {
+      const formData = new FormData(e.target);
+      const userProfile = await getUserProfile(user.uid);
+
+      const needData = {
+        shelterId: user.uid,
+        shelterName: userProfile?.name || 'Unknown',
+        shelterCity: userProfile?.city || 'Not specified',
+        shelterType: userProfile?.shelterType || 'Not specified',
+        title: formData.get('title'),
+        category: formData.get('category'),
+        description: formData.get('description'),
+        urgency: formData.get('urgency'),
+        supportType: formData.get('supportType'),
+        status: 'OPEN',
+        createdAt: serverTimestamp()
+      };
+
+      await addDoc(collection(db, 'needs'), needData);
+
+      showToast('Requirement posted successfully!', 'success');
+      document.getElementById('successModal').classList.remove('hidden');
+      e.target.reset();
+      document.getElementById('charCount').textContent = '0';
+      
+      setTimeout(async () => {
+        await loadNeeds();
+      }, 500);
+      
+    } catch (err) {
+      console.error('Error posting requirement:', err);
+      showToast('Error posting requirement: ' + err.message, 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '📝 Post Requirement';
+    }
+  });
+
   async function loadNeeds() {
     const user = getCurrentFirebaseUser();
     if (!user) return;
 
-    const q = query(collection(db, 'needs'), where('shelterId', '==', user.uid));
-    const snap = await getDocs(q);
-    allNeeds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderNeeds();
+    try {
+      const q = query(
+        collection(db, 'needs'), 
+        where('shelterId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snap = await getDocs(q);
+      allNeeds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      updateStats();
+      renderNeeds();
+    } catch (err) {
+      console.error('Error loading needs:', err);
+      
+      try {
+        const q2 = query(collection(db, 'needs'), where('shelterId', '==', user.uid));
+        const snap2 = await getDocs(q2);
+        allNeeds = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+        updateStats();
+        renderNeeds();
+      } catch (err2) {
+        console.error('Fallback query failed:', err2);
+        showToast('Error loading requirements', 'error');
+      }
+    }
+  }
+
+  function updateStats() {
+    const counts = {
+      OPEN: 0,
+      SPONSORED: 0,
+      COMPLETED: 0
+    };
+    
+    allNeeds.forEach(need => {
+      if (counts[need.status] !== undefined) {
+        counts[need.status]++;
+      }
+    });
+    
+    document.getElementById('openCount').textContent = counts.OPEN;
+    document.getElementById('sponsoredCount').textContent = counts.SPONSORED;
+    document.getElementById('completedCount').textContent = counts.COMPLETED;
   }
 
   function renderNeeds() {
@@ -192,20 +404,64 @@
       : allNeeds.filter(n => n.status === currentFilter);
 
     if (!filtered.length) {
-      container.innerHTML = `<div class="glass-card rounded-xl p-8 text-center text-slate-400">No requirements found.</div>`;
+      container.innerHTML = `<div class="glass-card rounded-xl p-8 text-center text-slate-400">
+        ${currentFilter === 'all' ? 'No requirements yet. Post your first one!' : 'No ' + currentFilter.toLowerCase() + ' requirements.'}
+      </div>`;
       return;
     }
 
-    container.innerHTML = filtered.map(need => `
-      <div class="glass-card rounded-xl p-6 card-hover">
-        <div class="flex justify-between mb-3">
-          <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
-          <span class="text-sm text-slate-400">${need.category}</span>
+    const urgencyColors = {
+      high: 'bg-red-500/20 text-red-400 border-red-400/30',
+      medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-400/30',
+      low: 'bg-green-500/20 text-green-400 border-green-400/30'
+    };
+
+    container.innerHTML = filtered.map(need => {
+      const urgencyClass = urgencyColors[need.urgency] || urgencyColors.low;
+      const canComplete = need.status === 'SPONSORED';
+
+      return `
+        <div class="glass-card rounded-xl p-6 card-hover">
+          <div class="flex justify-between mb-3">
+            <span class="status-badge status-${need.status?.toLowerCase() || 'open'}">${need.status || 'OPEN'}</span>
+            <span class="text-sm text-slate-400">${need.category}</span>
+          </div>
+          
+          <h3 class="text-lg font-semibold mb-2">${need.title}</h3>
+          <p class="text-slate-400 mb-3">${need.description}</p>
+          
+          <div class="flex gap-2 text-xs mb-3">
+            <span class="px-3 py-1 rounded-full border ${urgencyClass}">
+              ${need.urgency?.toUpperCase() || 'LOW'} urgency
+            </span>
+            <span class="px-3 py-1 rounded-full border border-slate-600 text-slate-400">
+              ${need.supportType || 'donation'}
+            </span>
+          </div>
+
+          ${need.status === 'SPONSORED' ? `
+            <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-3 text-xs text-yellow-400">
+              ✓ Sponsored - Waiting for delivery/completion
+            </div>
+          ` : ''}
+
+          ${need.status === 'COMPLETED' ? `
+            <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-xs text-green-400">
+              ✓ Completed successfully!
+            </div>
+          ` : ''}
+
+          ${canComplete ? `
+            <button 
+              onclick="window.openCompleteModal('${need.id}', '${need.title.replace(/'/g, "\\'")}')"
+              class="btn-primary w-full py-2 text-sm mt-2"
+            >
+              ✓ Mark as Completed
+            </button>
+          ` : ''}
         </div>
-        <h3 class="text-lg font-semibold mb-2">${need.title}</h3>
-        <p class="text-slate-400">${need.description}</p>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 </script>
 

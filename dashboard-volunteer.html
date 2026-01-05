@@ -11,7 +11,7 @@
 
 <body class="min-h-screen">
 
-<!-- ================= NAVBAR ================= -->
+<!-- NAVBAR -->
 <nav class="fixed top-0 inset-x-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
     <div class="flex items-center space-x-3">
@@ -30,7 +30,7 @@
   </div>
 </nav>
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <section class="pt-32 pb-16">
   <div class="max-w-7xl mx-auto px-6">
     <h1 class="text-4xl font-bold mb-2">Volunteer Dashboard</h1>
@@ -40,24 +40,80 @@
   </div>
 </section>
 
-<!-- ================= NEEDS GRID ================= -->
+<!-- FILTERS -->
+<section class="pb-8">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="glass-card rounded-xl p-6">
+      <h3 class="text-lg font-semibold mb-4">Filter Opportunities</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Category Filter -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Category</label>
+          <select id="filterCategory" class="w-full px-4 py-2 rounded-lg">
+            <option value="">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Education">Education</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Essentials">Essentials</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Status</label>
+          <select id="filterStatus" class="w-full px-4 py-2 rounded-lg">
+            <option value="both">Open & Sponsored</option>
+            <option value="OPEN">Open Only</option>
+            <option value="SPONSORED">Sponsored Only</option>
+          </select>
+        </div>
+
+        <!-- Sort By -->
+        <div>
+          <label class="block text-sm text-slate-300 mb-2">Sort By</label>
+          <select id="sortBy" class="w-full px-4 py-2 rounded-lg">
+            <option value="match">Best Match</option>
+            <option value="recent">Most Recent</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="applyFilters" class="btn-primary px-6 py-2 text-sm mt-4">
+        Apply Filters
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- NEEDS GRID -->
 <section class="pb-32">
   <div class="max-w-7xl mx-auto px-6">
 
     <div class="mb-8">
-      <h2 class="text-2xl font-semibold mb-1">Volunteering Opportunities</h2>
-      <p class="text-slate-400">Browse needs you can sign up for</p>
+      <h2 class="text-2xl font-semibold mb-1">Recommended For You</h2>
+      <p class="text-slate-400">Opportunities matched to your skills and location</p>
     </div>
 
+    <!-- Loading State -->
+    <div id="loadingState" class="glass-card rounded-xl p-8 text-center">
+      <div class="animate-pulse">
+        <div class="text-slate-400">Loading opportunities...</div>
+      </div>
+    </div>
+
+    <!-- Needs Container -->
     <div
       id="needsContainer"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     ></div>
 
   </div>
 </section>
 
-<!-- ================= SIGNUP MODAL ================= -->
+<!-- SIGNUP MODAL -->
 <div
   id="signupModal"
   class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
@@ -71,7 +127,7 @@
     <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-green-400/20 flex items-center justify-center text-green-400">
       ✓
     </div>
-    <h3 class="text-xl font-semibold mb-2">You’re Signed Up!</h3>
+    <h3 class="text-xl font-semibold mb-2">You're Signed Up!</h3>
     <p id="modalMessage" class="text-slate-400 mb-6">
       Thank you for volunteering.
     </p>
@@ -81,19 +137,24 @@
   </div>
 </div>
 
-<!-- ================= JS (UNCHANGED) ================= -->
 <script type="module">
-  import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser } from './js/auth.js';
+  import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser, getUserProfile } from './js/auth.js';
   import { db } from './js/firebase.js';
   import { showToast } from './js/app.js';
+  import { getRecommendedNeeds, getMatchPercentage } from './js/matching.js';
   import {
     collection,
     addDoc,
     query,
     where,
     getDocs,
-    serverTimestamp
+    serverTimestamp,
+    orderBy
   } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+  let userProfile = null;
+  let allNeeds = [];
+  let filteredNeeds = [];
 
   window.closeSignupModal = function () {
     document.getElementById('signupModal').classList.add('hidden');
@@ -108,9 +169,25 @@
         return;
       }
 
+      // Check if already signed up
+      const existingQuery = query(
+        collection(db, 'volunteer_signups'),
+        where('needId', '==', needId),
+        where('volunteerId', '==', user.uid)
+      );
+      const existingSnap = await getDocs(existingQuery);
+      
+      if (!existingSnap.empty) {
+        showToast('You are already signed up for this opportunity', 'info');
+        return;
+      }
+
+      // Create signup record
       await addDoc(collection(db, 'volunteer_signups'), {
         needId,
         volunteerId: user.uid,
+        volunteerName: userProfile?.name || 'Anonymous',
+        skills: userProfile?.skills || [],
         createdAt: serverTimestamp()
       });
 
@@ -120,8 +197,8 @@
       document.getElementById('signupModal').classList.remove('hidden');
       showToast(`Signed up for "${title}"`, 'success');
     } catch (err) {
-      console.error(err);
-      showToast('Error signing up. Please try again.', 'error');
+      console.error('Signup error:', err);
+      showToast('Error signing up: ' + err.message, 'error');
     }
   };
 
@@ -135,7 +212,15 @@
       const name = getUserName();
       if (name) document.getElementById('userName').textContent = name;
 
-      await loadNeeds();
+      try {
+        userProfile = await getUserProfile(user.uid);
+        console.log('User profile loaded:', userProfile);
+        await loadNeeds();
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        showToast('Error loading profile', 'error');
+        await loadNeeds(); // Load anyway without recommendations
+      }
     });
   });
 
@@ -145,42 +230,165 @@
     else showToast('Error signing out', 'error');
   });
 
-  async function loadNeeds() {
-    const q = query(
-      collection(db, 'needs'),
-      where('status', 'in', ['OPEN', 'SPONSORED'])
-    );
+  // Apply filters
+  document.getElementById('applyFilters').addEventListener('click', () => {
+    applyFilters();
+  });
 
-    const snap = await getDocs(q);
-    const needs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  async function loadNeeds() {
+    const loadingState = document.getElementById('loadingState');
     const container = document.getElementById('needsContainer');
+    
+    loadingState.classList.remove('hidden');
+    container.classList.add('hidden');
+
+    try {
+      const q = query(
+        collection(db, 'needs'),
+        where('status', 'in', ['OPEN', 'SPONSORED']),
+        orderBy('createdAt', 'desc')
+      );
+
+      const snap = await getDocs(q);
+      allNeeds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      console.log(`Loaded ${allNeeds.length} needs`);
+      
+      // Apply recommendations if profile exists
+      if (userProfile && userProfile.city && userProfile.skills && userProfile.skills.length > 0) {
+        console.log('Applying recommendations...');
+        const recommended = await getRecommendedNeeds(allNeeds, userProfile, 'volunteer');
+        filteredNeeds = recommended;
+      } else {
+        console.log('No complete profile - showing all needs');
+        filteredNeeds = allNeeds;
+      }
+
+      applyFilters();
+      
+    } catch (err) {
+      console.error('Error loading needs:', err);
+      
+      // Fallback query without orderBy
+      try {
+        const q2 = query(
+          collection(db, 'needs'),
+          where('status', 'in', ['OPEN', 'SPONSORED'])
+        );
+        const snap2 = await getDocs(q2);
+        allNeeds = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+        filteredNeeds = allNeeds;
+        applyFilters();
+      } catch (err2) {
+        console.error('Fallback query failed:', err2);
+        loadingState.innerHTML = `
+          <div class="text-red-400">
+            Error loading opportunities. Please refresh the page.
+          </div>`;
+        showToast('Error loading opportunities', 'error');
+      }
+    }
+  }
+
+  function applyFilters() {
+    const category = document.getElementById('filterCategory').value;
+    const status = document.getElementById('filterStatus').value;
+    const sortBy = document.getElementById('sortBy').value;
+
+    let filtered = [...filteredNeeds];
+
+    // Apply category filter
+    if (category) {
+      filtered = filtered.filter(n => n.category === category);
+    }
+
+    // Apply status filter
+    if (status !== 'both') {
+      filtered = filtered.filter(n => n.status === status);
+    }
+
+    // Apply sorting
+    if (sortBy === 'recent') {
+      filtered.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
+    }
+    // 'match' sorting is default from recommendations
+
+    renderNeeds(filtered);
+  }
+
+  function renderNeeds(needs) {
+    const loadingState = document.getElementById('loadingState');
+    const container = document.getElementById('needsContainer');
+    
+    loadingState.classList.add('hidden');
+    container.classList.remove('hidden');
 
     if (!needs.length) {
       container.innerHTML = `
         <div class="col-span-full glass-card rounded-xl p-8 text-center text-slate-400">
-          No volunteering opportunities available right now.
+          No opportunities match your current filters. Try adjusting your selection.
         </div>`;
       return;
     }
 
-    container.innerHTML = needs.map(need => `
-      <div class="glass-card rounded-xl p-6 card-hover">
-        <div class="flex justify-between mb-3">
-          <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
-          <span class="text-sm text-slate-400">${need.category}</span>
+    const urgencyColors = {
+      high: 'text-red-400',
+      medium: 'text-yellow-400',
+      low: 'text-green-400'
+    };
+
+    container.innerHTML = needs.map(need => {
+      const matchScore = need.scoring ? getMatchPercentage(need.scoring.score) : 0;
+      const hasScoring = need.scoring && need.scoring.score > 0;
+      const urgencyColor = urgencyColors[need.urgency] || urgencyColors.low;
+
+      return `
+        <div class="glass-card rounded-xl p-6 card-hover relative">
+          ${hasScoring ? `
+            <div class="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 text-black text-xs font-bold">
+              ${matchScore}% Match
+            </div>
+          ` : ''}
+
+          <div class="flex justify-between mb-3 ${hasScoring ? 'pr-20' : ''}">
+            <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
+            <span class="text-sm text-slate-400">${need.category}</span>
+          </div>
+
+          <h3 class="text-lg font-semibold mb-2">${need.title}</h3>
+          <p class="text-slate-400 mb-3 text-sm line-clamp-2">${need.description}</p>
+
+          <div class="flex items-center gap-2 text-xs mb-2">
+            <span class="${urgencyColor}">● ${need.urgency} urgency</span>
+            <span class="text-slate-500">•</span>
+            <span class="text-slate-400">${need.shelterCity || 'Location N/A'}</span>
+          </div>
+
+          <div class="text-xs text-slate-500 mb-4">
+            Posted by: ${need.shelterName || 'Anonymous Shelter'}
+          </div>
+
+          ${hasScoring ? `
+            <div class="bg-slate-800/50 rounded-lg p-3 mb-4 text-xs">
+              <p class="font-semibold mb-2 text-slate-300">Why recommended:</p>
+              <ul class="space-y-1 text-slate-400">
+                ${need.scoring.reasons.map(r => `<li>• ${r}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+
+          <button
+            onclick="window.signUpForNeed('${need.id}','${need.title.replace(/'/g, "\\'")}')"
+            class="btn-primary w-full py-2 text-sm"
+          >
+            Sign Up to Volunteer
+          </button>
         </div>
-
-        <h3 class="text-lg font-semibold mb-2">${need.title}</h3>
-        <p class="text-slate-400 mb-4">${need.description}</p>
-
-        <button
-          onclick="window.signUpForNeed('${need.id}','${need.title.replace(/'/g, "\\'")}')"
-          class="btn-primary w-full py-2 text-sm"
-        >
-          Sign Up
-        </button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 </script>
 
