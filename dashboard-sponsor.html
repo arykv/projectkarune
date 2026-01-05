@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Dashboard — Karune Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">Karune Connect</a>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="dashboard-sponsor.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Dashboard</a>
+                        <a href="impact.html" class="text-gray-700 hover:text-blue-600 font-medium">Impact</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" id="userName">Sponsor</span>
+                    <button id="logoutBtn" class="text-gray-600 hover:text-gray-900">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Sponsor Dashboard</h1>
+            <p class="text-gray-600">Browse needs and support shelters in your community</p>
+        </div>
+    </section>
+
+    <!-- Needs Feed -->
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Active Needs</h2>
+                <p class="text-gray-600">Select a need to sponsor</p>
+            </div>
+
+            <div id="needsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Needs will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Sponsorship Modal -->
+    <div id="sponsorModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black opacity-50 modal-backdrop" onclick="window.closeSponsorModal()"></div>
+            <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-8">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Sponsorship Confirmed!</h3>
+                    <p class="text-gray-600 mb-6" id="modalMessage">Thank you for your support!</p>
+                    <button 
+                        onclick="window.closeSponsorModal()"
+                        class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser } from './js/auth.js';
+        import { db } from './js/firebase.js';
+        import { showToast } from './js/app.js';
+        import { 
+            collection, 
+            addDoc, 
+            query, 
+            where, 
+            getDocs,
+            doc,
+            updateDoc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Make functions available globally for onclick handlers
+        window.closeSponsorModal = function() {
+            document.getElementById('sponsorModal').classList.add('hidden');
+        };
+
+        window.sponsorNeed = async function(needId, type, title) {
+            try {
+                const user = getCurrentFirebaseUser();
+                if (!user) {
+                    showToast('Please log in again', 'error');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Create sponsorship document
+                await addDoc(collection(db, 'sponsorships'), {
+                    needId: needId,
+                    sponsorId: user.uid,
+                    type: type,
+                    createdAt: serverTimestamp()
+                });
+
+                // Update need status to SPONSORED
+                const needRef = doc(db, 'needs', needId);
+                await updateDoc(needRef, {
+                    status: 'SPONSORED'
+                });
+
+                const modal = document.getElementById('sponsorModal');
+                const message = document.getElementById('modalMessage');
+                
+                if (type === 'monetary') {
+                    message.textContent = `Thank you for choosing to sponsor "${title}" monetarily. Your support will make a real difference!`;
+                } else {
+                    message.textContent = `Thank you for choosing direct delivery for "${title}". We'll connect you with the shelter for delivery details.`;
+                }
+                
+                modal.classList.remove('hidden');
+                showToast(`Sponsorship confirmed for "${title}"`, 'success');
+                
+                // Reload needs to reflect updated status
+                await loadNeeds();
+            } catch (error) {
+                console.error('Error sponsoring need:', error);
+                showToast('Error processing sponsorship. Please try again.', 'error');
+            }
+        };
+
+        // Check authentication
+        window.addEventListener('load', () => {
+            onAuthStateChanged(async (user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const role = getUserRole();
+                if (role !== 'sponsor') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const userName = getUserName();
+                if (userName) {
+                    document.getElementById('userName').textContent = userName;
+                }
+                
+                await loadNeeds();
+            });
+        });
+
+        async function handleLogout() {
+            const result = await signOut();
+            if (result.success) {
+                window.location.href = 'index.html';
+            } else {
+                showToast('Error signing out', 'error');
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+        async function loadNeeds() {
+            try {
+                const q = query(
+                    collection(db, 'needs'),
+                    where('status', '==', 'OPEN')
+                );
+                
+                const querySnapshot = await getDocs(q);
+                const needs = [];
+                querySnapshot.forEach((doc) => {
+                    needs.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                const container = document.getElementById('needsContainer');
+                
+                if (needs.length === 0) {
+                    container.innerHTML = '<div class="col-span-full bg-white rounded-lg shadow-md p-8 text-center text-gray-600">No open needs found.</div>';
+                    return;
+                }
+                
+                container.innerHTML = needs.map(need => `
+                    <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
+                            <span class="text-sm text-gray-500">${need.category}</span>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">${need.title}</h3>
+                        <p class="text-gray-600 mb-4">${need.description}</p>
+                        
+                        <div class="flex space-x-2">
+                            <button 
+                                onclick="window.sponsorNeed('${need.id}', 'monetary', ${JSON.stringify(need.title)})"
+                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition text-sm"
+                            >
+                                Sponsor Monetarily
+                            </button>
+                            <button 
+                                onclick="window.sponsorNeed('${need.id}', 'delivery', ${JSON.stringify(need.title)})"
+                                class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
+                            >
+                                Direct Delivery
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading needs:', error);
+                showToast('Error loading needs', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

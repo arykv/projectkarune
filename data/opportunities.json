@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "title": "English Language Tutoring",
+    "category": "Teaching & Workshops",
+    "description": "Help adults learn English in evening classes. No experience required, training provided.",
+    "location": "Downtown Community Center",
+    "timeCommitment": "2 hours/week",
+    "schedule": "Tuesdays & Thursdays, 6-7 PM",
+    "volunteersNeeded": 5,
+    "currentVolunteers": 3
+  },
+  {
+    "id": 2,
+    "title": "Food Distribution Volunteer",
+    "category": "Logistics & Delivery",
+    "description": "Assist with food distribution at community kitchen. Help organize and serve meals.",
+    "location": "Hope Shelter Kitchen",
+    "timeCommitment": "3 hours/week",
+    "schedule": "Saturdays, 9 AM - 12 PM",
+    "volunteersNeeded": 8,
+    "currentVolunteers": 5
+  },
+  {
+    "id": 3,
+    "title": "Computer Skills Workshop",
+    "category": "Skill-based Sessions",
+    "description": "Teach basic computer skills and resume building. Tech background preferred.",
+    "location": "Bright Future Youth Center",
+    "timeCommitment": "4 hours/week",
+    "schedule": "Mondays & Wednesdays, 2-4 PM",
+    "volunteersNeeded": 3,
+    "currentVolunteers": 2
+  },
+  {
+    "id": 4,
+    "title": "Elderly Companionship Program",
+    "category": "Elderly Companionship",
+    "description": "Spend time with elderly residents, engage in activities, and provide emotional support.",
+    "location": "Sunset Senior Shelter",
+    "timeCommitment": "2 hours/week",
+    "schedule": "Flexible scheduling",
+    "volunteersNeeded": 10,
+    "currentVolunteers": 7
+  },
+  {
+    "id": 5,
+    "title": "Administrative Support",
+    "category": "Operations Support",
+    "description": "Help with data entry, phone calls, and general administrative tasks.",
+    "location": "Central City Shelter Office",
+    "timeCommitment": "5 hours/week",
+    "schedule": "Weekdays, flexible",
+    "volunteersNeeded": 4,
+    "currentVolunteers": 2
+  },
+  {
+    "id": 6,
+    "title": "Art & Craft Workshops",
+    "category": "Teaching & Workshops",
+    "description": "Lead creative workshops for children and teens. Bring your creativity and enthusiasm!",
+    "location": "Youth Community Center",
+    "timeCommitment": "2 hours/week",
+    "schedule": "Saturdays, 10 AM - 12 PM",
+    "volunteersNeeded": 6,
+    "currentVolunteers": 4
+  },
+  {
+    "id": 7,
+    "title": "Donation Sorting",
+    "category": "Logistics & Delivery",
+    "description": "Help sort and organize incoming donations. Physical work, great for groups!",
+    "location": "Warehouse Distribution Center",
+    "timeCommitment": "3 hours/week",
+    "schedule": "Fridays, 1-4 PM",
+    "volunteersNeeded": 12,
+    "currentVolunteers": 8
+  },
+  {
+    "id": 8,
+    "title": "Financial Literacy Workshop",
+    "category": "Skill-based Sessions",
+    "description": "Teach budgeting and financial planning to adults. Finance background helpful.",
+    "location": "Community Learning Hub",
+    "timeCommitment": "3 hours/week",
+    "schedule": "Saturdays, 2-5 PM",
+    "volunteersNeeded": 2,
+    "currentVolunteers": 1
+  }
+]

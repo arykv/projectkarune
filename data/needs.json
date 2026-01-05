@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Winter Clothing Drive",
+    "category": "Clothing",
+    "description": "Urgent need for warm winter clothing for 200+ residents. Sizes ranging from children to adults.",
+    "status": "Open",
+    "target": 200,
+    "current": 85,
+    "shelter": "Downtown Community Shelter"
+  },
+  {
+    "id": 2,
+    "title": "Daily Meals Program",
+    "category": "Food",
+    "description": "Provide nutritious meals for 150 individuals daily. Seeking sponsors for monthly meal programs.",
+    "status": "Open",
+    "target": 150,
+    "current": 150,
+    "shelter": "Hope Shelter Foundation"
+  },
+  {
+    "id": 3,
+    "title": "Educational Supplies",
+    "category": "Education",
+    "description": "Books, notebooks, and learning materials needed for after-school tutoring program serving 75 children.",
+    "status": "Sponsored",
+    "target": 75,
+    "current": 75,
+    "shelter": "Bright Future Youth Center"
+  },
+  {
+    "id": 4,
+    "title": "Medical Supplies",
+    "category": "Healthcare",
+    "description": "First aid kits, prescription medications, and basic medical equipment for on-site health clinic.",
+    "status": "Open",
+    "target": 50,
+    "current": 32,
+    "shelter": "Community Health Shelter"
+  },
+  {
+    "id": 5,
+    "title": "Hygiene Kits",
+    "category": "Essentials",
+    "description": "Toothbrushes, soap, shampoo, and other hygiene essentials for 300 individuals.",
+    "status": "Open",
+    "target": 300,
+    "current": 120,
+    "shelter": "Central City Shelter"
+  },
+  {
+    "id": 6,
+    "title": "Bedding & Linens",
+    "category": "Essentials",
+    "description": "Blankets, sheets, and pillows for newly opened wing accommodating 100 residents.",
+    "status": "Completed",
+    "target": 100,
+    "current": 100,
+    "shelter": "New Horizon Shelter"
+  }
+]

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shelter Dashboard — Karune Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">Karune Connect</a>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="dashboard-shelter.html" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Dashboard</a>
+                        <a href="impact.html" class="text-gray-700 hover:text-blue-600 font-medium">Impact</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" id="userName">Shelter</span>
+                    <button id="logoutBtn" class="text-gray-600 hover:text-gray-900">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Shelter Dashboard</h1>
+            <p class="text-gray-600">Post requirements and track support from sponsors and volunteers</p>
+        </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Post Requirement Form -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Post a New Requirement</h2>
+                    <form id="requirementForm" class="space-y-4">
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                            <input 
+                                type="text" 
+                                id="title" 
+                                name="title" 
+                                required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="e.g., Winter Clothing Drive"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select 
+                                id="category" 
+                                name="category" 
+                                required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value="">Select category</option>
+                                <option value="Food">Food</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Education">Education</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Essentials">Essentials</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                required
+                                rows="4"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Describe your requirement in detail..."
+                            ></textarea>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            id="submitBtn"
+                            class="w-full bg-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Post Requirement
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Posted Needs List -->
+            <div class="lg:col-span-2">
+                <div class="mb-6 flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-900">Posted Requirements</h2>
+                    <div class="flex space-x-2">
+                        <button 
+                            onclick="window.filterNeeds('all')"
+                            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium filter-btn"
+                            data-filter="all"
+                        >
+                            All
+                        </button>
+                        <button 
+                            onclick="window.filterNeeds('OPEN')"
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium filter-btn"
+                            data-filter="OPEN"
+                        >
+                            Open
+                        </button>
+                        <button 
+                            onclick="window.filterNeeds('SPONSORED')"
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium filter-btn"
+                            data-filter="SPONSORED"
+                        >
+                            Sponsored
+                        </button>
+                        <button 
+                            onclick="window.filterNeeds('COMPLETED')"
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium filter-btn"
+                            data-filter="COMPLETED"
+                        >
+                            Completed
+                        </button>
+                    </div>
+                </div>
+
+                <div id="needsContainer" class="space-y-4">
+                    <!-- Needs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black opacity-50 modal-backdrop" onclick="window.closeSuccessModal()"></div>
+            <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-8">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Requirement Posted!</h3>
+                    <p class="text-gray-600 mb-6">Your requirement has been posted successfully. Sponsors and volunteers will be able to see it now.</p>
+                    <button 
+                        onclick="window.closeSuccessModal()"
+                        class="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser } from './js/auth.js';
+        import { db } from './js/firebase.js';
+        import { showToast } from './js/app.js';
+        import { 
+            collection, 
+            addDoc, 
+            query, 
+            where, 
+            getDocs,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        let allNeeds = [];
+        let currentFilter = 'all';
+
+        // Make functions available globally for onclick handlers
+        window.filterNeeds = function(status) {
+            currentFilter = status;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            const activeBtn = document.querySelector(`[data-filter="${status}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-purple-600', 'text-white');
+                activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+            }
+            
+            renderNeeds();
+        };
+
+        window.closeSuccessModal = function() {
+            document.getElementById('successModal').classList.add('hidden');
+        };
+
+        // Check authentication
+        window.addEventListener('load', () => {
+            onAuthStateChanged(async (user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const role = getUserRole();
+                if (role !== 'shelter') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const userName = getUserName();
+                if (userName) {
+                    document.getElementById('userName').textContent = userName;
+                }
+                
+                await loadNeeds();
+            });
+        });
+
+        async function handleLogout() {
+            const result = await signOut();
+            if (result.success) {
+                window.location.href = 'index.html';
+            } else {
+                showToast('Error signing out', 'error');
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+        async function loadNeeds() {
+            try {
+                const user = getCurrentFirebaseUser();
+                if (!user) return;
+
+                const q = query(
+                    collection(db, 'needs'),
+                    where('shelterId', '==', user.uid)
+                );
+                
+                const querySnapshot = await getDocs(q);
+                allNeeds = [];
+                querySnapshot.forEach((doc) => {
+                    allNeeds.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                renderNeeds();
+            } catch (error) {
+                console.error('Error loading needs:', error);
+                showToast('Error loading needs', 'error');
+            }
+        }
+
+        function renderNeeds() {
+            const container = document.getElementById('needsContainer');
+            const filtered = currentFilter === 'all' 
+                ? allNeeds 
+                : allNeeds.filter(n => n.status === currentFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="bg-white rounded-lg shadow-md p-8 text-center text-gray-600">No requirements found.</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(need => `
+                <div class="bg-white rounded-lg shadow-md p-6 card-hover">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="status-badge status-${need.status.toLowerCase()}">${need.status}</span>
+                        <span class="text-sm text-gray-500">${need.category}</span>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">${need.title}</h3>
+                    <p class="text-gray-600 mb-4">${need.description}</p>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('requirementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Posting...';
+            
+            try {
+                const user = getCurrentFirebaseUser();
+                if (!user) {
+                    showToast('Please log in again', 'error');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const formData = new FormData(e.target);
+                const needData = {
+                    title: formData.get('title'),
+                    category: formData.get('category'),
+                    description: formData.get('description'),
+                    shelterId: user.uid,
+                    status: 'OPEN',
+                    createdAt: serverTimestamp()
+                };
+
+                await addDoc(collection(db, 'needs'), needData);
+                
+                // Reset form
+                e.target.reset();
+                
+                // Reload needs
+                await loadNeeds();
+                
+                // Show success modal
+                document.getElementById('successModal').classList.remove('hidden');
+                showToast('Requirement posted successfully!', 'success');
+            } catch (error) {
+                console.error('Error posting need:', error);
+                showToast('Error posting requirement. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Post Requirement';
+            }
+        });
+    </script>
+</body>
+</html>

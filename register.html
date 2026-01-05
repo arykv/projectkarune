@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Karune Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">Karune Connect</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Form -->
+    <section class="py-16">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2 text-center">Join Karune Connect</h1>
+                <p class="text-gray-600 text-center mb-8">Create your account and start making a difference</p>
+
+                <form id="registerForm" class="space-y-6">
+                    <!-- Name -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter your full name"
+                        >
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="your.email@example.com"
+                        >
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required
+                            minlength="6"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="At least 6 characters"
+                        >
+                        <p class="mt-1 text-sm text-gray-500">Password must be at least 6 characters long</p>
+                    </div>
+
+                    <!-- Role Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-4">I want to join as:</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="roleSelection">
+                            <!-- Sponsor -->
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="role" value="sponsor" class="peer sr-only" required>
+                                <div class="border-2 border-gray-200 rounded-lg p-6 text-center hover:border-blue-500 peer-checked:border-blue-600 peer-checked:bg-blue-50 transition">
+                                    <div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="font-semibold text-gray-900">Sponsor</div>
+                                    <div class="text-sm text-gray-600 mt-1">Support through donations</div>
+                                </div>
+                            </label>
+
+                            <!-- Volunteer -->
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="role" value="volunteer" class="peer sr-only">
+                                <div class="border-2 border-gray-200 rounded-lg p-6 text-center hover:border-green-500 peer-checked:border-green-600 peer-checked:bg-green-50 transition">
+                                    <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="font-semibold text-gray-900">Volunteer</div>
+                                    <div class="text-sm text-gray-600 mt-1">Give your time</div>
+                                </div>
+                            </label>
+
+                            <!-- Shelter -->
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="role" value="shelter" class="peer sr-only">
+                                <div class="border-2 border-gray-200 rounded-lg p-6 text-center hover:border-purple-500 peer-checked:border-purple-600 peer-checked:bg-purple-50 transition">
+                                    <div class="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="font-semibold text-gray-900">Shelter</div>
+                                    <div class="text-sm text-gray-600 mt-1">Post your needs</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"></div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit"
+                        id="submitBtn"
+                        class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Create Account
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-gray-600">
+                            Already have an account? 
+                            <a href="login.html" class="text-blue-600 hover:text-blue-700 font-medium">Sign in here</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script type="module">
+        import { signUpWithEmail } from './js/auth.js';
+        import { showToast } from './js/app.js';
+
+        // Check for role parameter in URL and pre-select
+        const urlParams = new URLSearchParams(window.location.search);
+        const roleParam = urlParams.get('role');
+        if (roleParam) {
+            const roleInput = document.querySelector(`input[value="${roleParam}"]`);
+            if (roleInput) {
+                roleInput.checked = true;
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // Reset UI
+            errorDiv.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+            
+            const formData = new FormData(e.target);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const role = formData.get('role');
+
+            if (!role) {
+                errorDiv.textContent = 'Please select a role (Sponsor, Volunteer, or Shelter).';
+                errorDiv.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+                return;
+            }
+
+            const result = await signUpWithEmail(email, password, name, role);
+
+            if (result.success) {
+                showToast('Registration successful! Redirecting...', 'success');
+
+                // Redirect to appropriate dashboard
+                setTimeout(() => {
+                    if (role === 'sponsor') {
+                        window.location.href = 'dashboard-sponsor.html';
+                    } else if (role === 'volunteer') {
+                        window.location.href = 'dashboard-volunteer.html';
+                    } else if (role === 'shelter') {
+                        window.location.href = 'dashboard-shelter.html';
+                    }
+                }, 1000);
+            } else {
+                errorDiv.textContent = result.error || 'Registration failed. Please try again.';
+                errorDiv.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
+        });
+    </script>
+</body>
+</html>
