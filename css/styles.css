@@ -1,108 +1,175 @@
-/* Custom styles for Karune Connect */
-:root {
-  --primary-color: #2563eb;
-  --primary-dark: #1d4ed8;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --danger-color: #ef4444;
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-600: #4b5563;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
-}
+/* ===============================
+   Karune Connect – Dark Premium Theme
+   Reference-inspired (Glass + Teal)
+   NO functionality changes
+   =============================== */
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Loading animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+   :root {
+    --bg-main: #070b14;
+    --bg-soft: #0b1220;
+    --card-bg: rgba(15, 23, 42, 0.72);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-main: #e5e7eb;
+    --text-muted: #94a3b8;
+    --accent: #22d3ee;
+    --accent-2: #2dd4bf;
+    --success: #22c55e;
+    --warning: #facc15;
+    --danger: #ef4444;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  body {
+    background: radial-gradient(1200px 600px at 50% -200px, rgba(34,211,238,0.12), transparent 60%),
+                linear-gradient(180deg, var(--bg-main), var(--bg-soft));
+    color: var(--text-main);
   }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* Modal backdrop */
-.modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-}
-
-/* Status badges */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.status-open {
-  background-color: #dbeafe;
-  color: #1e40af;
-}
-
-.status-sponsored {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-.status-completed {
-  background-color: #d1fae5;
-  color: #065f46;
-}
-
-/* Card hover effects */
-.card-hover {
-  transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-/* Progress bar */
-.progress-bar {
-  transition: width 0.5s ease;
-}
-
-/* Number counter animation */
-@keyframes countUp {
-  from {
-    opacity: 0;
+  
+  /* -------------------------------
+     Typography tweaks
+  -------------------------------- */
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
   }
-  to {
-    opacity: 1;
+  
+  .text-muted {
+    color: var(--text-muted);
   }
-}
-
-.counter-animate {
-  animation: countUp 0.5s ease-out;
-}
-
-/* Filter button active state */
-.filter-btn.active,
-.filter-btn.bg-purple-600 {
-  background-color: #9333ea !important;
-  color: white !important;
-}
+  
+  /* -------------------------------
+     Navbar
+  -------------------------------- */
+  nav {
+    background: rgba(7, 11, 20, 0.7) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border);
+  }
+  
+  nav a {
+    color: var(--text-muted);
+  }
+  
+  nav a:hover {
+    color: white;
+  }
+  
+  /* Primary CTA button */
+  .btn-primary,
+  nav a.bg-blue-600 {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color: #020617 !important;
+    border-radius: 9999px !important;
+    font-weight: 600;
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 0 24px rgba(34,211,238,0.35);
+  }
+  
+  /* -------------------------------
+     Glass Card
+  -------------------------------- */
+  .glass-card,
+  .bg-white {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--card-border);
+  }
+  
+  /* Elevation hover */
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 40px rgba(0,0,0,0.4);
+  }
+  
+  /* -------------------------------
+     Buttons
+  -------------------------------- */
+  .btn-outline {
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    background: rgba(255,255,255,0.04);
+    border-radius: 9999px;
+  }
+  
+  .btn-outline:hover {
+    background: rgba(255,255,255,0.08);
+  }
+  
+  /* -------------------------------
+     Inputs & Forms
+  -------------------------------- */
+  input, textarea, select {
+    background: rgba(2,6,23,0.6) !important;
+    border: 1px solid var(--card-border) !important;
+    color: var(--text-main) !important;
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    color: #64748b;
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(34,211,238,0.25);
+  }
+  
+  /* -------------------------------
+     Status Badges
+  -------------------------------- */
+  .status-open {
+    background: rgba(34,211,238,0.15);
+    color: var(--accent);
+  }
+  
+  .status-sponsored {
+    background: rgba(250,204,21,0.15);
+    color: var(--warning);
+  }
+  
+  .status-completed {
+    background: rgba(34,197,94,0.15);
+    color: var(--success);
+  }
+  
+  /* -------------------------------
+     Filter Pills
+  -------------------------------- */
+  .filter-btn {
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.06) !important;
+    color: var(--text-muted) !important;
+  }
+  
+  .filter-btn.bg-purple-600,
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color: #020617 !important;
+  }
+  
+  /* -------------------------------
+     Modals
+  -------------------------------- */
+  .modal-backdrop {
+    backdrop-filter: blur(6px);
+  }
+  
+  /* -------------------------------
+     Progress bars
+  -------------------------------- */
+  .progress-bar {
+    box-shadow: 0 0 16px rgba(34,211,238,0.5);
+  }
+  
+  /* -------------------------------
+     Footer
+  -------------------------------- */
+  footer {
+    background: transparent !important;
+    border-top: 1px solid var(--card-border);
+  }
+  
