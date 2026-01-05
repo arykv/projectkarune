@@ -1,26 +1,43 @@
 /* ===============================
-   Karune Connect – Dark Premium Theme
-   Reference-inspired (Glass + Teal)
+   Karune Connect – Light Premium Theme
+   Reference-inspired (Soft Glass + Calm Blue)
    NO functionality changes
    =============================== */
 
    :root {
-    --bg-main: #070b14;
-    --bg-soft: #0b1220;
-    --card-bg: rgba(15, 23, 42, 0.72);
-    --card-border: rgba(255, 255, 255, 0.08);
-    --text-main: #e5e7eb;
-    --text-muted: #94a3b8;
-    --accent: #22d3ee;
-    --accent-2: #2dd4bf;
+    /* Backgrounds */
+    --bg-main: #f4f9ff;          /* very light blue */
+    --bg-soft: #ffffff;
+  
+    /* Cards */
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(2, 6, 23, 0.08);
+  
+    /* Text */
+    --text-main: #0f172a;        /* slate-900 */
+    --text-muted: #64748b;       /* slate-500 */
+  
+    /* Accent (single, consistent blue) */
+    --accent: #3b82f6;           /* blue-500 */
+    --accent-2: #60a5fa;         /* blue-400 */
+  
+    /* Status */
     --success: #22c55e;
-    --warning: #facc15;
+    --warning: #f59e0b;
     --danger: #ef4444;
   }
   
+  /* -------------------------------
+     Body background
+  -------------------------------- */
   body {
-    background: radial-gradient(1200px 600px at 50% -200px, rgba(34,211,238,0.12), transparent 60%),
-                linear-gradient(180deg, var(--bg-main), var(--bg-soft));
+    background:
+      radial-gradient(
+        1200px 600px at 50% -200px,
+        rgba(59, 130, 246, 0.12),
+        transparent 60%
+      ),
+      linear-gradient(180deg, var(--bg-main), var(--bg-soft));
     color: var(--text-main);
   }
   
@@ -29,6 +46,7 @@
   -------------------------------- */
   h1, h2, h3, h4 {
     letter-spacing: -0.02em;
+    color: var(--text-main);
   }
   
   .text-muted {
@@ -39,8 +57,8 @@
      Navbar
   -------------------------------- */
   nav {
-    background: rgba(7, 11, 20, 0.7) !important;
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--card-border);
   }
   
@@ -49,65 +67,75 @@
   }
   
   nav a:hover {
-    color: white;
-  }
-  
-  /* Primary CTA button */
-  .btn-primary,
-  nav a.bg-blue-600 {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
-    color: #020617 !important;
-    border-radius: 9999px !important;
-    font-weight: 600;
-    box-shadow: 0 0 0 rgba(0,0,0,0);
-  }
-  
-  .btn-primary:hover {
-    box-shadow: 0 0 24px rgba(34,211,238,0.35);
+    color: var(--text-main);
   }
   
   /* -------------------------------
-     Glass Card
+     Primary CTA button
+  -------------------------------- */
+  .btn-primary,
+  nav a.bg-blue-600 {
+    background: linear-gradient(
+      135deg,
+      var(--accent),
+      var(--accent-2)
+    ) !important;
+    color: #ffffff !important;
+    border-radius: 9999px !important;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(59,130,246,0.25);
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 12px 28px rgba(59,130,246,0.35);
+    transform: translateY(-1px);
+  }
+  
+  /* -------------------------------
+     Glass Cards (light)
   -------------------------------- */
   .glass-card,
   .bg-white {
     background: var(--card-bg) !important;
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(12px);
     border: 1px solid var(--card-border);
   }
   
   /* Elevation hover */
   .card-hover:hover {
     transform: translateY(-6px);
-    box-shadow: 0 25px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
   }
   
   /* -------------------------------
-     Buttons
+     Buttons (outline)
   -------------------------------- */
   .btn-outline {
     border: 1px solid var(--card-border);
     color: var(--text-main);
-    background: rgba(255,255,255,0.04);
+    background: rgba(15, 23, 42, 0.02);
     border-radius: 9999px;
   }
   
   .btn-outline:hover {
-    background: rgba(255,255,255,0.08);
+    background: rgba(59,130,246,0.08);
+    border-color: var(--accent);
   }
   
   /* -------------------------------
      Inputs & Forms
   -------------------------------- */
-  input, textarea, select {
-    background: rgba(2,6,23,0.6) !important;
+  input,
+  textarea,
+  select {
+    background: rgba(255,255,255,0.9) !important;
     border: 1px solid var(--card-border) !important;
     color: var(--text-main) !important;
   }
   
   input::placeholder,
   textarea::placeholder {
-    color: #64748b;
+    color: #94a3b8;
   }
   
   input:focus,
@@ -115,19 +143,19 @@
   select:focus {
     outline: none;
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(34,211,238,0.25);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
   }
   
   /* -------------------------------
      Status Badges
   -------------------------------- */
   .status-open {
-    background: rgba(34,211,238,0.15);
+    background: rgba(59,130,246,0.12);
     color: var(--accent);
   }
   
   .status-sponsored {
-    background: rgba(250,204,21,0.15);
+    background: rgba(245,158,11,0.15);
     color: var(--warning);
   }
   
@@ -141,14 +169,18 @@
   -------------------------------- */
   .filter-btn {
     border-radius: 9999px;
-    background: rgba(255,255,255,0.06) !important;
+    background: rgba(15,23,42,0.04) !important;
     color: var(--text-muted) !important;
   }
   
   .filter-btn.bg-purple-600,
   .filter-btn.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
-    color: #020617 !important;
+    background: linear-gradient(
+      135deg,
+      var(--accent),
+      var(--accent-2)
+    ) !important;
+    color: #ffffff !important;
   }
   
   /* -------------------------------
@@ -162,7 +194,12 @@
      Progress bars
   -------------------------------- */
   .progress-bar {
-    box-shadow: 0 0 16px rgba(34,211,238,0.5);
+    background: linear-gradient(
+      90deg,
+      var(--accent),
+      var(--accent-2)
+    );
+    box-shadow: 0 0 12px rgba(59,130,246,0.35);
   }
   
   /* -------------------------------
@@ -171,5 +208,9 @@
   footer {
     background: transparent !important;
     border-top: 1px solid var(--card-border);
+    color: var(--text-muted);
   }
-  
+  .progress-bar {
+    transition: width 1.5s ease-out;
+    width: 0%;
+  }
