@@ -1,127 +1,100 @@
-// Enhanced Matching and Scoring Algorithm for Karune Connect
+// Enhanced Matching System with Google Maps Integration
+// Save as js/matching.js
 
-// Expanded city coordinates database for India
-const cityCoords = {
-  // Metro Cities
-  'mumbai': { lat: 19.0760, lng: 72.8777 },
-  'delhi': { lat: 28.7041, lng: 77.1025 },
-  'bangalore': { lat: 12.9716, lng: 77.5946 },
-  'bengaluru': { lat: 12.9716, lng: 77.5946 },
-  'kolkata': { lat: 22.5726, lng: 88.3639 },
-  'chennai': { lat: 13.0827, lng: 80.2707 },
-  'hyderabad': { lat: 17.3850, lng: 78.4867 },
-  
-  // Tier 2 Cities
-  'pune': { lat: 18.5204, lng: 73.8567 },
-  'ahmedabad': { lat: 23.0225, lng: 72.5714 },
-  'jaipur': { lat: 26.9124, lng: 75.7873 },
-  'lucknow': { lat: 26.8467, lng: 80.9462 },
-  'surat': { lat: 21.1702, lng: 72.8311 },
-  'kanpur': { lat: 26.4499, lng: 80.3319 },
-  'nagpur': { lat: 21.1458, lng: 79.0882 },
-  'indore': { lat: 22.7196, lng: 75.8577 },
-  'thane': { lat: 19.2183, lng: 72.9781 },
-  'bhopal': { lat: 23.2599, lng: 77.4126 },
-  'visakhapatnam': { lat: 17.6868, lng: 83.2185 },
-  'pimpri-chinchwad': { lat: 18.6298, lng: 73.7997 },
-  'patna': { lat: 25.5941, lng: 85.1376 },
-  'vadodara': { lat: 22.3072, lng: 73.1812 },
-  'ghaziabad': { lat: 28.6692, lng: 77.4538 },
-  'ludhiana': { lat: 30.9010, lng: 75.8573 },
-  'agra': { lat: 27.1767, lng: 78.0081 },
-  'nashik': { lat: 19.9975, lng: 73.7898 },
-  'faridabad': { lat: 28.4089, lng: 77.3178 },
-  'meerut': { lat: 28.9845, lng: 77.7064 },
-  'rajkot': { lat: 22.3039, lng: 70.8022 },
-  'varanasi': { lat: 25.3176, lng: 82.9739 },
-  'srinagar': { lat: 34.0837, lng: 74.7973 },
-  'amritsar': { lat: 31.6340, lng: 74.8723 },
-  'allahabad': { lat: 25.4358, lng: 81.8463 },
-  'prayagraj': { lat: 25.4358, lng: 81.8463 },
-  'ranchi': { lat: 23.3441, lng: 85.3096 },
-  'howrah': { lat: 22.5958, lng: 88.2636 },
-  'coimbatore': { lat: 11.0168, lng: 76.9558 },
-  'jabalpur': { lat: 23.1815, lng: 79.9864 },
-  'gwalior': { lat: 26.2183, lng: 78.1828 },
-  'vijayawada': { lat: 16.5062, lng: 80.6480 },
-  'jodhpur': { lat: 26.2389, lng: 73.0243 },
-  'madurai': { lat: 9.9252, lng: 78.1198 },
-  'raipur': { lat: 21.2514, lng: 81.6296 },
-  'kota': { lat: 25.2138, lng: 75.8648 },
-  'chandigarh': { lat: 30.7333, lng: 76.7794 },
-  'guwahati': { lat: 26.1445, lng: 91.7362 },
-  'solapur': { lat: 17.6599, lng: 75.9064 },
-  'trichy': { lat: 10.7905, lng: 78.7047 },
-  'tiruchirappalli': { lat: 10.7905, lng: 78.7047 }
-};
+import { calculateDistanceFromCoords } from './location.js';
 
-// Calculate distance between two cities in km
-export function calculateDistance(city1, city2) {
-  if (!city1 || !city2) return 999;
-
-  const c1 = cityCoords[city1.toLowerCase().trim()] || null;
-  const c2 = cityCoords[city2.toLowerCase().trim()] || null;
-
-  if (!c1 || !c2) {
-    console.log(`Unknown city: ${!c1 ? city1 : city2}`);
-    return 999;
+/**
+ * Calculate distance between two locations using stored coordinates
+ * Falls back to 999 if coordinates are unavailable
+ */
+export function calculateDistance(location1, location2) {
+  // Try to use coordinates first (most accurate)
+  if (location1?.coordinates && location2?.coordinates) {
+    const distance = calculateDistanceFromCoords(
+      location1.coordinates,
+      location2.coordinates
+    );
+    
+    if (distance !== null) {
+      return distance;
+    }
   }
 
-  // Haversine formula
-  const R = 6371; // Earth radius in km
-  const dLat = (c2.lat - c1.lat) * Math.PI / 180;
-  const dLng = (c2.lng - c1.lng) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(c1.lat * Math.PI / 180) * Math.cos(c2.lat * Math.PI / 180) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(R * c);
+  // Fallback: return large distance if coordinates unavailable
+  console.log('Coordinates unavailable for distance calculation');
+  return 999;
 }
 
-// Score a need for a sponsor
+/**
+ * Score a need for a sponsor based on multiple factors
+ * Returns score (0-100) and reasons for the match
+ */
 export function scoreNeedForSponsor(need, sponsor) {
   let score = 0;
   let reasons = [];
 
-  // 1. Category Match (40 points)
+  // 1. Category Match (40 points) - HIGHEST PRIORITY
   if (sponsor.preferredCategories && Array.isArray(sponsor.preferredCategories)) {
     if (sponsor.preferredCategories.includes(need.category)) {
       score += 40;
-      reasons.push(`Matches your preferred category: ${need.category}`);
+      reasons.push(`✓ Matches your preferred category: ${need.category}`);
+    } else if (sponsor.preferredCategories.length === 0) {
+      // Give partial points if no preferences set
+      score += 10;
     }
   }
 
-  // 2. Location Proximity (30 points)
-  const distance = calculateDistance(sponsor.city, need.shelterCity);
-  if (distance < 50) {
-    score += 30;
-    reasons.push(`Very close - ${distance}km away`);
-  } else if (distance < 150) {
-    score += 20;
-    reasons.push(`Nearby - ${distance}km away`);
-  } else if (distance < 300) {
-    score += 10;
-    reasons.push(`In your region - ${distance}km away`);
-  } else if (distance < 999) {
-    score += 5;
-    reasons.push(`${distance}km away`);
+  // 2. Location Proximity (35 points) - USING REAL COORDINATES
+  const distance = calculateDistance(sponsor, need);
+  
+  if (distance < 999) {
+    if (distance < 20) {
+      score += 35;
+      reasons.push(`📍 Very close - ${distance}km away in ${need.shelterCity || 'your area'}`);
+    } else if (distance < 50) {
+      score += 30;
+      reasons.push(`📍 Nearby - ${distance}km away`);
+    } else if (distance < 100) {
+      score += 20;
+      reasons.push(`📍 Same region - ${distance}km away`);
+    } else if (distance < 300) {
+      score += 10;
+      reasons.push(`📍 Regional - ${distance}km away`);
+    } else {
+      score += 5;
+      reasons.push(`📍 ${distance}km away`);
+    }
+  } else {
+    // No coordinates available
+    if (sponsor.city && need.shelterCity) {
+      const sameCity = sponsor.city.toLowerCase() === need.shelterCity.toLowerCase();
+      if (sameCity) {
+        score += 30;
+        reasons.push(`📍 Same city: ${need.shelterCity}`);
+      } else {
+        score += 5;
+        reasons.push(`📍 Location: ${need.shelterCity}`);
+      }
+    }
   }
 
-  // 3. Urgency Multiplier (20 points)
+  // 3. Urgency Level (20 points)
   if (need.urgency === 'high') {
     score += 20;
-    reasons.push('HIGH urgency - needs immediate help');
+    reasons.push('🚨 HIGH urgency - immediate help needed');
   } else if (need.urgency === 'medium') {
     score += 10;
-    reasons.push('Medium urgency');
+    reasons.push('⚠️ Medium urgency');
+  } else if (need.urgency === 'low') {
+    score += 5;
+    reasons.push('🕐 Low urgency');
   }
 
-  // 4. Support Type Match (10 points)
+  // 4. Support Type Compatibility (5 points)
   if (need.supportType === 'donation' || need.supportType === 'both') {
     if (sponsor.donationType === 'monetary' || sponsor.donationType === 'both') {
-      score += 10;
-      reasons.push('Accepts monetary donations');
+      score += 5;
+      reasons.push('💰 Accepts your donation type');
     }
   }
 
@@ -132,54 +105,89 @@ export function scoreNeedForSponsor(need, sponsor) {
   };
 }
 
-// Score a need for a volunteer
+/**
+ * Score a need for a volunteer based on skills and location
+ */
 export function scoreNeedForVolunteer(need, volunteer) {
   let score = 0;
   let reasons = [];
 
-  // 1. Category-to-Skill Match (50 points)
+  // 1. Skills Match (45 points) - HIGHEST PRIORITY
   const categorySkillMap = {
-    'Education': ['teaching', 'mentoring', 'technical'],
-    'Healthcare': ['healthcare', 'counseling'],
-    'Food': ['cooking', 'delivery'],
+    'Food': ['cooking', 'delivery', 'administration'],
     'Clothing': ['delivery', 'administration'],
+    'Education': ['teaching', 'mentoring', 'technical', 'administration'],
+    'Healthcare': ['healthcare', 'counseling', 'administration'],
     'Essentials': ['delivery', 'administration']
   };
 
   const relevantSkills = categorySkillMap[need.category] || [];
   const volunteerSkills = volunteer.skills || [];
-  const matchedSkills = volunteerSkills.filter(s => relevantSkills.includes(s));
   
-  if (matchedSkills.length > 0) {
-    const points = Math.min(50, matchedSkills.length * 25);
-    score += points;
-    reasons.push(`Your skills match: ${matchedSkills.join(', ')}`);
-  } else if (volunteerSkills.length > 0) {
-    // Give some points for having any skills
-    score += 10;
-    reasons.push('Your general skills can help');
+  if (volunteerSkills.length > 0) {
+    const matchedSkills = volunteerSkills.filter(s => relevantSkills.includes(s));
+    
+    if (matchedSkills.length > 0) {
+      const skillPoints = Math.min(45, matchedSkills.length * 20);
+      score += skillPoints;
+      reasons.push(`✓ Your skills match: ${matchedSkills.join(', ')}`);
+    } else {
+      // Give some points for general willingness
+      score += 15;
+      reasons.push('✓ Your general skills can help');
+    }
   }
 
-  // 2. Location Proximity (30 points)
-  const distance = calculateDistance(volunteer.city, need.shelterCity);
-  if (distance < 50) {
-    score += 30;
-    reasons.push(`Very close - ${distance}km away`);
-  } else if (distance < 150) {
-    score += 20;
-    reasons.push(`Nearby - ${distance}km away`);
-  } else if (distance < 300) {
-    score += 10;
-    reasons.push(`In your region - ${distance}km away`);
-  } else if (distance < 999) {
-    score += 5;
-    reasons.push(`${distance}km away`);
+  // 2. Location Proximity (35 points) - USING REAL COORDINATES
+  const distance = calculateDistance(volunteer, need);
+  
+  if (distance < 999) {
+    if (distance < 20) {
+      score += 35;
+      reasons.push(`📍 Very close - ${distance}km away in ${need.shelterCity || 'your area'}`);
+    } else if (distance < 50) {
+      score += 30;
+      reasons.push(`📍 Nearby - ${distance}km away`);
+    } else if (distance < 100) {
+      score += 20;
+      reasons.push(`📍 Same region - ${distance}km away`);
+    } else if (distance < 300) {
+      score += 10;
+      reasons.push(`📍 Regional - ${distance}km away`);
+    } else {
+      score += 5;
+      reasons.push(`📍 ${distance}km away`);
+    }
+  } else {
+    // Fallback to city name comparison
+    if (volunteer.city && need.shelterCity) {
+      const sameCity = volunteer.city.toLowerCase() === need.shelterCity.toLowerCase();
+      if (sameCity) {
+        score += 30;
+        reasons.push(`📍 Same city: ${need.shelterCity}`);
+      } else {
+        score += 5;
+        reasons.push(`📍 Location: ${need.shelterCity}`);
+      }
+    }
   }
 
-  // 3. Support Type Match (20 points)
+  // 3. Support Type Match (15 points)
   if (need.supportType === 'volunteer' || need.supportType === 'both') {
-    score += 20;
-    reasons.push('Needs volunteer support');
+    score += 15;
+    reasons.push('🤝 Actively seeking volunteers');
+  } else {
+    score += 5;
+    reasons.push('🤝 May need volunteer support');
+  }
+
+  // 4. Age Group Preference Match (5 points)
+  if (volunteer.preferredAgeGroup && need.ageGroup) {
+    if (volunteer.preferredAgeGroup === need.ageGroup || 
+        volunteer.preferredAgeGroup === 'any') {
+      score += 5;
+      reasons.push(`👥 Matches your age group preference`);
+    }
   }
 
   return { 
@@ -189,23 +197,32 @@ export function scoreNeedForVolunteer(need, volunteer) {
   };
 }
 
-// Get match percentage from score (0-100)
+/**
+ * Convert raw score to percentage (0-100)
+ */
 export function getMatchPercentage(score) {
-  // Max possible score is 100, so convert to percentage
   return Math.min(Math.round(score), 100);
 }
 
-// Get recommended needs for a user
+/**
+ * Get recommended needs for a user with enhanced scoring
+ */
 export async function getRecommendedNeeds(needs, userProfile, userRole) {
   if (!userProfile) {
     console.log('No user profile - returning all needs without scoring');
     return needs;
   }
 
+  // Ensure user has required location data
+  if (!userProfile.city) {
+    console.log('User missing city - recommendations may be limited');
+  }
+
   const scoringFunction = userRole === 'sponsor' 
     ? scoreNeedForSponsor 
     : scoreNeedForVolunteer;
 
+  // Score all needs
   const scored = needs.map(need => {
     const scoring = scoringFunction(need, userProfile);
     return {
@@ -215,26 +232,95 @@ export async function getRecommendedNeeds(needs, userProfile, userRole) {
   });
 
   // Sort by score (highest first)
-  scored.sort((a, b) => b.scoring.score - a.scoring.score);
+  scored.sort((a, b) => {
+    // Primary sort: by score
+    if (b.scoring.score !== a.scoring.score) {
+      return b.scoring.score - a.scoring.score;
+    }
+    
+    // Secondary sort: by distance (if available)
+    const distA = a.scoring.distance || 9999;
+    const distB = b.scoring.distance || 9999;
+    return distA - distB;
+  });
 
-  console.log(`Scored ${scored.length} needs. Top match: ${scored[0]?.scoring?.score || 0} points`);
+  // Log top matches for debugging
+  if (scored.length > 0) {
+    console.log(`✓ Scored ${scored.length} needs`);
+    console.log(`Top match: ${scored[0]?.title} (${scored[0]?.scoring?.score} points)`);
+    if (scored[0]?.scoring?.distance) {
+      console.log(`Distance: ${scored[0].scoring.distance}km`);
+    }
+  }
 
   return scored;
 }
 
-// Check if user profile is complete for recommendations
+/**
+ * Check if user profile is complete enough for good recommendations
+ */
 export function isProfileComplete(profile, role) {
   if (!profile) return false;
   
   const hasCity = !!profile.city;
+  const hasCoordinates = !!(profile.coordinates?.lat && profile.coordinates?.lng);
   
   if (role === 'sponsor') {
-    const hasPreferences = profile.preferredCategories && profile.preferredCategories.length > 0;
+    const hasPreferences = profile.preferredCategories && 
+                          profile.preferredCategories.length > 0;
     return hasCity && hasPreferences;
   } else if (role === 'volunteer') {
     const hasSkills = profile.skills && profile.skills.length > 0;
     return hasCity && hasSkills;
+  } else if (role === 'shelter') {
+    return hasCity;
   }
   
   return hasCity;
+}
+
+/**
+ * Get profile completion suggestions
+ */
+export function getProfileCompletionSuggestions(profile, role) {
+  const suggestions = [];
+  
+  if (!profile) {
+    return ['Complete your profile to get better recommendations'];
+  }
+  
+  if (!profile.city) {
+    suggestions.push('Add your city for location-based matching');
+  }
+  
+  if (!profile.coordinates?.lat || !profile.coordinates?.lng) {
+    suggestions.push('Enable location for accurate distance calculations');
+  }
+  
+  if (role === 'sponsor') {
+    if (!profile.preferredCategories || profile.preferredCategories.length === 0) {
+      suggestions.push('Select preferred categories to see relevant needs');
+    }
+  } else if (role === 'volunteer') {
+    if (!profile.skills || profile.skills.length === 0) {
+      suggestions.push('Add your skills for better opportunity matching');
+    }
+  }
+  
+  return suggestions;
+}
+
+/**
+ * Filter needs by distance radius
+ */
+export function filterNeedsByDistance(needs, userProfile, maxDistanceKm) {
+  if (!userProfile?.coordinates) {
+    console.log('Cannot filter by distance - user coordinates unavailable');
+    return needs;
+  }
+  
+  return needs.filter(need => {
+    const distance = calculateDistance(userProfile, need);
+    return distance < maxDistanceKm;
+  });
 }
