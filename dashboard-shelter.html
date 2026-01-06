@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shelter Dashboard — Karune Connect</title>
+  <title>Shelter Dashboard – Karune Connect</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css" />
+  
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 
 <body class="min-h-screen">
@@ -207,6 +210,23 @@
   </div>
 </div>
 
+<!-- SUPPORTERS MODAL -->
+<div id="supportersModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+  <div class="fixed inset-0 bg-black/60 modal-backdrop" onclick="window.closeSupportersModal()"></div>
+
+  <div class="relative glass-card rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+    <h3 class="text-xl font-semibold mb-4" id="supportersTitle">Supporters & Contact Info</h3>
+    
+    <div id="supportersContent" class="space-y-4">
+      <div class="text-center text-slate-400 py-8">Loading supporters...</div>
+    </div>
+
+    <button onclick="window.closeSupportersModal()" class="btn-outline w-full py-2 mt-6">
+      Close
+    </button>
+  </div>
+</div>
+
 <script type="module">
   import { onAuthStateChanged, getUserRole, getUserName, signOut, getCurrentFirebaseUser, getUserProfile } from './js/auth.js';
   import { db } from './js/firebase.js';
@@ -220,7 +240,8 @@
     orderBy,
     serverTimestamp,
     doc,
-    updateDoc
+    updateDoc,
+    getDoc
   } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
   let allNeeds = [];
@@ -245,11 +266,195 @@
     needToComplete = null;
   };
 
+  window.closeSupportersModal = function() {
+    document.getElementById('supportersModal').classList.add('hidden');
+  };
+
   window.openCompleteModal = function(needId, title) {
     needToComplete = needId;
     document.getElementById('completeMessage').textContent = 
       `Mark "${title}" as completed? This action cannot be undone.`;
     document.getElementById('completeModal').classList.remove('hidden');
+  };
+
+  window.viewSupporters = async function(needId, title) {
+    const modal = document.getElementById('supportersModal');
+    const titleEl = document.getElementById('supportersTitle');
+    const contentEl = document.getElementById('supportersContent');
+
+    titleEl.textContent = `Supporters for: ${title}`;
+    contentEl.innerHTML = '<div class="text-center text-slate-400 py-8">Loading supporters...</div>';
+    modal.classList.remove('hidden');
+
+    try {
+      // Load sponsors
+      const sponsorsQ = query(
+        collection(db, 'sponsorships'),
+        where('needId', '==', needId)
+      );
+      const sponsorsSnap = await getDocs(sponsorsQ);
+      const sponsorsData = sponsorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Fetch sponsor user profiles for contact info
+      const sponsors = await Promise.all(sponsorsData.map(async (s) => {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', s.sponsorId));
+          const userData = userDoc.exists() ? userDoc.data() : {};
+          return { ...s, email: userData.email, phone: userData.contactPhone };
+        } catch (error) {
+          console.error('Error fetching sponsor profile:', error);
+          return s;
+        }
+      }));
+
+      // Load volunteers
+      const volunteersQ = query(
+        collection(db, 'volunteer_signups'),
+        where('needId', '==', needId)
+      );
+      const volunteersSnap = await getDocs(volunteersQ);
+      const volunteersData = volunteersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Fetch volunteer user profiles for contact info
+      const volunteers = await Promise.all(volunteersData.map(async (v) => {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', v.volunteerId));
+          const userData = userDoc.exists() ? userDoc.data() : {};
+          return { ...v, email: userData.email, phone: userData.contactPhone };
+        } catch (error) {
+          console.error('Error fetching volunteer profile:', error);
+          return v;
+        }
+      }));
+
+      if (sponsors.length === 0 && volunteers.length === 0) {
+        contentEl.innerHTML = `
+          <div class="glass-card rounded-xl p-8 text-center text-slate-400">
+            No sponsors or volunteers yet for this requirement.
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+
+      // Sponsors section
+      if (sponsors.length > 0) {
+        html += `
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+              💰 Sponsors (${sponsors.length})
+            </h4>
+            <div class="space-y-3">
+              ${sponsors.map(s => {
+                const date = s.createdAt?.toDate?.() || new Date();
+                const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                return `
+                  <div class="glass-card rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-3">
+                      <div>
+                        <p class="font-semibold text-lg">${s.sponsorName}</p>
+                        <p class="text-xs text-slate-400">${dateStr}</p>
+                      </div>
+                      ${s.amount ? `
+                        <span class="px-3 py-1 rounded-full bg-green-400/10 text-green-400 text-sm font-semibold">
+                          ₹${s.amount.toLocaleString()}
+                        </span>
+                      ` : ''}
+                    </div>
+                    
+                    <div class="flex gap-2 mb-3 text-xs">
+                      <span class="px-2 py-1 rounded-full ${s.type === 'monetary' ? 'bg-cyan-400/10 text-cyan-400' : 'bg-teal-400/10 text-teal-400'}">
+                        ${s.type === 'monetary' ? '💰 Monetary' : '📦 Delivery'}
+                      </span>
+                    </div>
+
+                    <div class="bg-slate-800/50 rounded-lg p-3 space-y-2">
+                      <p class="text-sm font-semibold text-slate-300">Contact Information:</p>
+                      ${s.email ? `
+                        <div class="flex items-center gap-2 text-sm">
+                          <span class="text-slate-400">📧</span>
+                          <a href="mailto:${s.email}" class="text-cyan-400 hover:underline">${s.email}</a>
+                        </div>
+                      ` : '<p class="text-xs text-slate-500">Email not available</p>'}
+                      ${s.phone ? `
+                        <div class="flex items-center gap-2 text-sm">
+                          <span class="text-slate-400">📱</span>
+                          <a href="tel:${s.phone}" class="text-cyan-400 hover:underline">${s.phone}</a>
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Volunteers section
+      if (volunteers.length > 0) {
+        html += `
+          <div>
+            <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+              🤝 Volunteers (${volunteers.length})
+            </h4>
+            <div class="space-y-3">
+              ${volunteers.map(v => {
+                const date = v.createdAt?.toDate?.() || new Date();
+                const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                return `
+                  <div class="glass-card rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                      <div>
+                        <p class="font-semibold text-lg">${v.volunteerName}</p>
+                        <p class="text-xs text-slate-400">${dateStr}</p>
+                      </div>
+                    </div>
+                    
+                    ${v.skills?.length ? `
+                      <div class="flex flex-wrap gap-1 mb-3">
+                        ${v.skills.map(skill => `
+                          <span class="px-2 py-1 rounded-full bg-cyan-400/10 text-cyan-400 text-xs">
+                            ${skill}
+                          </span>
+                        `).join('')}
+                      </div>
+                    ` : ''}
+
+                    <div class="bg-slate-800/50 rounded-lg p-3 space-y-2">
+                      <p class="text-sm font-semibold text-slate-300">Contact Information:</p>
+                      ${v.email ? `
+                        <div class="flex items-center gap-2 text-sm">
+                          <span class="text-slate-400">📧</span>
+                          <a href="mailto:${v.email}" class="text-cyan-400 hover:underline">${v.email}</a>
+                        </div>
+                      ` : '<p class="text-xs text-slate-500">Email not available</p>'}
+                      ${v.phone ? `
+                        <div class="flex items-center gap-2 text-sm">
+                          <span class="text-slate-400">📱</span>
+                          <a href="tel:${v.phone}" class="text-cyan-400 hover:underline">${v.phone}</a>
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      contentEl.innerHTML = html;
+
+    } catch (error) {
+      console.error('Error loading supporters:', error);
+      contentEl.innerHTML = `
+        <div class="glass-card rounded-xl p-8 text-center text-red-400">
+          Error loading supporters. Please try again.
+        </div>
+      `;
+    }
   };
 
   window.confirmComplete = async function() {
@@ -271,7 +476,6 @@
     }
   };
 
-  // Character counter
   document.getElementById('description').addEventListener('input', (e) => {
     document.getElementById('charCount').textContent = e.target.value.length;
   });
@@ -316,6 +520,7 @@
       const needData = {
         shelterId: user.uid,
         shelterName: userProfile?.name || 'Unknown',
+        shelterEmail: user.email,
         shelterCity: userProfile?.city || 'Not specified',
         shelterType: userProfile?.shelterType || 'Not specified',
         title: formData.get('title'),
@@ -451,14 +656,25 @@
             </div>
           ` : ''}
 
-          ${canComplete ? `
-            <button 
-              onclick="window.openCompleteModal('${need.id}', '${need.title.replace(/'/g, "\\'")}')"
-              class="btn-primary w-full py-2 text-sm mt-2"
-            >
-              ✓ Mark as Completed
-            </button>
-          ` : ''}
+          <div class="flex gap-2 mt-3">
+            ${need.status !== 'OPEN' ? `
+              <button 
+                onclick="window.viewSupporters('${need.id}', '${need.title.replace(/'/g, "\\'")}')"
+                class="btn-outline flex-1 py-2 text-sm"
+              >
+                👥 View & Contact Supporters
+              </button>
+            ` : ''}
+            
+            ${canComplete ? `
+              <button 
+                onclick="window.openCompleteModal('${need.id}', '${need.title.replace(/'/g, "\\'")}')"
+                class="btn-primary flex-1 py-2 text-sm"
+              >
+                ✓ Mark Complete
+              </button>
+            ` : ''}
+          </div>
         </div>
       `;
     }).join('');

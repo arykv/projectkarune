@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register — Karune Connect</title>
+  <title>Register – Karune Connect</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css" />
+  
+  <!-- Google Maps API with Places Library -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwa_h73kFdX1d-8f97YaK1dKrd6Vd2ETE&libraries=places&callback=initMap" async defer></script>
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -172,8 +175,31 @@
         </div>
 
         <div>
-          <label class="block text-sm mb-2 text-slate-300">City</label>
-          <input type="text" name="city" placeholder="e.g. Mumbai" class="w-full px-4 py-3 rounded-lg" />
+          <label class="block text-sm mb-2 text-slate-300">
+            📍 City / Location
+            <span class="text-xs text-slate-500 ml-2">(Start typing to search)</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="shelterCity" 
+              name="city" 
+              placeholder="Search for your city..." 
+              class="w-full px-4 py-3 rounded-lg pr-10"
+              autocomplete="off"
+            />
+            <button 
+              type="button" 
+              id="shelterLocationBtn"
+              class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-cyan-400 hover:bg-cyan-400/10 rounded-lg transition"
+              title="Use my current location"
+            >
+              📍
+            </button>
+          </div>
+          <p class="text-xs text-slate-500 mt-1" id="shelterLocationHint">Select a location for accurate matching</p>
+          <input type="hidden" id="shelterLat" name="latitude" />
+          <input type="hidden" id="shelterLng" name="longitude" />
         </div>
       </div>
 
@@ -196,23 +222,23 @@
           <div class="space-y-2">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" name="preferredCategories" value="Food" class="w-4 h-4 rounded" />
-              <span class="text-sm">Food</span>
+              <span class="text-sm">Food & Nutrition</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" name="preferredCategories" value="Clothing" class="w-4 h-4 rounded" />
-              <span class="text-sm">Clothing</span>
+              <span class="text-sm">Clothing & Apparel</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" name="preferredCategories" value="Education" class="w-4 h-4 rounded" />
-              <span class="text-sm">Education</span>
+              <span class="text-sm">Education & Learning</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" name="preferredCategories" value="Healthcare" class="w-4 h-4 rounded" />
-              <span class="text-sm">Healthcare</span>
+              <span class="text-sm">Healthcare & Medicine</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" name="preferredCategories" value="Essentials" class="w-4 h-4 rounded" />
-              <span class="text-sm">Essentials</span>
+              <span class="text-sm">Daily Essentials</span>
             </label>
           </div>
         </div>
@@ -228,8 +254,31 @@
         </div>
 
         <div>
-          <label class="block text-sm mb-2 text-slate-300">City</label>
-          <input type="text" name="city" placeholder="e.g. Delhi" class="w-full px-4 py-3 rounded-lg" />
+          <label class="block text-sm mb-2 text-slate-300">
+            📍 City / Location
+            <span class="text-xs text-slate-500 ml-2">(Start typing to search)</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="sponsorCity" 
+              name="city" 
+              placeholder="Search for your city..." 
+              class="w-full px-4 py-3 rounded-lg pr-10"
+              autocomplete="off"
+            />
+            <button 
+              type="button" 
+              id="sponsorLocationBtn"
+              class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-cyan-400 hover:bg-cyan-400/10 rounded-lg transition"
+              title="Use my current location"
+            >
+              📍
+            </button>
+          </div>
+          <p class="text-xs text-slate-500 mt-1" id="sponsorLocationHint">Select a location for personalized recommendations</p>
+          <input type="hidden" id="sponsorLat" name="latitude" />
+          <input type="hidden" id="sponsorLng" name="longitude" />
         </div>
       </div>
 
@@ -238,7 +287,7 @@
         <h3 class="text-lg font-semibold text-slate-300">Volunteer Profile</h3>
         
         <div>
-          <label class="block text-sm mb-2 text-slate-300">Skills</label>
+          <label class="block text-sm mb-2 text-slate-300">Your Skills</label>
           <div class="space-y-2">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" name="skills" value="teaching" class="w-4 h-4 rounded" />
@@ -296,8 +345,31 @@
         </div>
 
         <div>
-          <label class="block text-sm mb-2 text-slate-300">City</label>
-          <input type="text" name="city" placeholder="e.g. Bangalore" class="w-full px-4 py-3 rounded-lg" />
+          <label class="block text-sm mb-2 text-slate-300">
+            📍 City / Location
+            <span class="text-xs text-slate-500 ml-2">(Start typing to search)</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="volunteerCity" 
+              name="city" 
+              placeholder="Search for your city..." 
+              class="w-full px-4 py-3 rounded-lg pr-10"
+              autocomplete="off"
+            />
+            <button 
+              type="button" 
+              id="volunteerLocationBtn"
+              class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-cyan-400 hover:bg-cyan-400/10 rounded-lg transition"
+              title="Use my current location"
+            >
+              📍
+            </button>
+          </div>
+          <p class="text-xs text-slate-500 mt-1" id="volunteerLocationHint">Select a location for nearby opportunities</p>
+          <input type="hidden" id="volunteerLat" name="latitude" />
+          <input type="hidden" id="volunteerLng" name="longitude" />
         </div>
       </div>
 
@@ -333,7 +405,14 @@
 <script type="module">
   import { signUpWithEmail } from './js/auth.js';
   import { showToast } from './js/app.js';
+  import { initLocationPicker, getCurrentLocation } from './js/location.js';
 
+  // Initialize Google Maps callback
+  window.initMap = function() {
+    console.log('Google Maps API loaded successfully');
+  };
+
+  // Auto-select role from URL parameter
   const urlParams = new URLSearchParams(window.location.search);
   const roleParam = urlParams.get('role');
 
@@ -345,24 +424,108 @@
     }
   }
 
+  // Store location data for each role
+  let locationData = {
+    shelter: null,
+    sponsor: null,
+    volunteer: null
+  };
+
   // Show/hide role-specific fields
   document.querySelectorAll('input[name="role"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
+      // Hide all role fields
       document.getElementById('shelterFields').classList.add('hidden');
       document.getElementById('sponsorFields').classList.add('hidden');
       document.getElementById('volunteerFields').classList.add('hidden');
 
       const role = e.target.value;
+      
+      // Show relevant role fields and initialize location picker
       if (role === 'shelter') {
         document.getElementById('shelterFields').classList.remove('hidden');
+        setTimeout(() => initLocationPicker('shelterCity', (data) => {
+          locationData.shelter = data;
+          document.getElementById('shelterLat').value = data.coordinates.lat;
+          document.getElementById('shelterLng').value = data.coordinates.lng;
+          document.getElementById('shelterLocationHint').textContent = 
+            `✓ Location set: ${data.city}, ${data.state}`;
+          document.getElementById('shelterLocationHint').classList.add('text-green-400');
+        }), 100);
       } else if (role === 'sponsor') {
         document.getElementById('sponsorFields').classList.remove('hidden');
+        setTimeout(() => initLocationPicker('sponsorCity', (data) => {
+          locationData.sponsor = data;
+          document.getElementById('sponsorLat').value = data.coordinates.lat;
+          document.getElementById('sponsorLng').value = data.coordinates.lng;
+          document.getElementById('sponsorLocationHint').textContent = 
+            `✓ Location set: ${data.city}, ${data.state}`;
+          document.getElementById('sponsorLocationHint').classList.add('text-green-400');
+        }), 100);
       } else if (role === 'volunteer') {
         document.getElementById('volunteerFields').classList.remove('hidden');
+        setTimeout(() => initLocationPicker('volunteerCity', (data) => {
+          locationData.volunteer = data;
+          document.getElementById('volunteerLat').value = data.coordinates.lat;
+          document.getElementById('volunteerLng').value = data.coordinates.lng;
+          document.getElementById('volunteerLocationHint').textContent = 
+            `✓ Location set: ${data.city}, ${data.state}`;
+          document.getElementById('volunteerLocationHint').classList.add('text-green-400');
+        }), 100);
       }
     });
   });
 
+  // Current location buttons
+  document.getElementById('shelterLocationBtn')?.addEventListener('click', () => {
+    getCurrentLocation(
+      (data) => {
+        document.getElementById('shelterCity').value = data.city;
+        locationData.shelter = data;
+        document.getElementById('shelterLat').value = data.coordinates.lat;
+        document.getElementById('shelterLng').value = data.coordinates.lng;
+        document.getElementById('shelterLocationHint').textContent = 
+          `✓ Location detected: ${data.city}, ${data.state}`;
+        document.getElementById('shelterLocationHint').classList.add('text-green-400');
+        showToast(`Location set to ${data.city}`, 'success');
+      },
+      (error) => showToast(error, 'error')
+    );
+  });
+
+  document.getElementById('sponsorLocationBtn')?.addEventListener('click', () => {
+    getCurrentLocation(
+      (data) => {
+        document.getElementById('sponsorCity').value = data.city;
+        locationData.sponsor = data;
+        document.getElementById('sponsorLat').value = data.coordinates.lat;
+        document.getElementById('sponsorLng').value = data.coordinates.lng;
+        document.getElementById('sponsorLocationHint').textContent = 
+          `✓ Location detected: ${data.city}, ${data.state}`;
+        document.getElementById('sponsorLocationHint').classList.add('text-green-400');
+        showToast(`Location set to ${data.city}`, 'success');
+      },
+      (error) => showToast(error, 'error')
+    );
+  });
+
+  document.getElementById('volunteerLocationBtn')?.addEventListener('click', () => {
+    getCurrentLocation(
+      (data) => {
+        document.getElementById('volunteerCity').value = data.city;
+        locationData.volunteer = data;
+        document.getElementById('volunteerLat').value = data.coordinates.lat;
+        document.getElementById('volunteerLng').value = data.coordinates.lng;
+        document.getElementById('volunteerLocationHint').textContent = 
+          `✓ Location detected: ${data.city}, ${data.state}`;
+        document.getElementById('volunteerLocationHint').classList.add('text-green-400');
+        showToast(`Location set to ${data.city}`, 'success');
+      },
+      (error) => showToast(error, 'error')
+    );
+  });
+
+  // Form submission
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -379,6 +542,7 @@
     const password = formData.get('password');
     const role = formData.get('role');
 
+    // Build role-specific data
     let roleData = {};
     
     if (role === 'shelter') {
@@ -387,7 +551,11 @@
         beneficiaryCount: parseInt(formData.get('beneficiaryCount')) || 0,
         ageGroup: formData.get('ageGroup'),
         contactPhone: formData.get('contactPhone'),
-        city: formData.get('city')
+        city: formData.get('city'),
+        coordinates: {
+          lat: parseFloat(formData.get('latitude')) || null,
+          lng: parseFloat(formData.get('longitude')) || null
+        }
       };
     } else if (role === 'sponsor') {
       const categories = formData.getAll('preferredCategories');
@@ -395,7 +563,11 @@
         orgType: formData.get('orgType'),
         preferredCategories: categories,
         donationType: formData.get('donationType'),
-        city: formData.get('city')
+        city: formData.get('city'),
+        coordinates: {
+          lat: parseFloat(formData.get('latitude')) || null,
+          lng: parseFloat(formData.get('longitude')) || null
+        }
       };
     } else if (role === 'volunteer') {
       const skills = formData.getAll('skills');
@@ -403,14 +575,18 @@
         skills: skills,
         availability: formData.get('availability'),
         preferredAgeGroup: formData.get('preferredAgeGroup'),
-        city: formData.get('city')
+        city: formData.get('city'),
+        coordinates: {
+          lat: parseFloat(formData.get('latitude')) || null,
+          lng: parseFloat(formData.get('longitude')) || null
+        }
       };
     }
 
     const result = await signUpWithEmail(name, email, password, role, roleData);
 
     if (result.success) {
-      showToast('Account created successfully!', 'success');
+      showToast('Account created successfully! 🎉', 'success');
       setTimeout(() => {
         if (role === 'sponsor') {
           window.location.href = 'dashboard-sponsor.html';
@@ -421,7 +597,7 @@
         } else {
           window.location.href = 'index.html';
         }
-      }, 800);
+      }, 1000);
     } else {
       errorDiv.textContent = result.error || 'Registration failed. Please try again.';
       errorDiv.classList.remove('hidden');

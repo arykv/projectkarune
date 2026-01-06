@@ -7,6 +7,9 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css" />
+  
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 
 <body class="min-h-screen">
@@ -40,100 +43,190 @@
   </div>
 </section>
 
-<!-- FILTERS -->
+<!-- TABS -->
 <section class="pb-8">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="glass-card rounded-xl p-6">
-      <h3 class="text-lg font-semibold mb-4">Filter Needs</h3>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Category Filter -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Category</label>
-          <select id="filterCategory" class="w-full px-4 py-2 rounded-lg">
-            <option value="">All Categories</option>
-            <option value="Food">Food</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Education">Education</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Essentials">Essentials</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <!-- Urgency Filter -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Urgency</label>
-          <select id="filterUrgency" class="w-full px-4 py-2 rounded-lg">
-            <option value="">All Urgency Levels</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
-        </div>
-
-        <!-- Sort By -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Sort By</label>
-          <select id="sortBy" class="w-full px-4 py-2 rounded-lg">
-            <option value="match">Best Match</option>
-            <option value="urgency">Urgency</option>
-            <option value="recent">Most Recent</option>
-          </select>
-        </div>
-      </div>
-
-      <button id="applyFilters" class="btn-primary px-6 py-2 text-sm mt-4">
-        Apply Filters
+    <div class="flex gap-4 mb-6">
+      <button onclick="window.switchTab('browse')" id="browseTab" class="tab-btn active px-6 py-3 rounded-lg">
+        Browse Needs
+      </button>
+      <button onclick="window.switchTab('history')" id="historyTab" class="tab-btn px-6 py-3 rounded-lg">
+        My Sponsorships
       </button>
     </div>
   </div>
 </section>
 
-<!-- NEEDS GRID -->
-<section class="pb-32">
-  <div class="max-w-7xl mx-auto px-6">
+<!-- BROWSE TAB -->
+<div id="browseContent">
+  <!-- FILTERS -->
+  <section class="pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="glass-card rounded-xl p-6">
+        <h3 class="text-lg font-semibold mb-4">Filter Needs</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm text-slate-300 mb-2">Category</label>
+            <select id="filterCategory" class="w-full px-4 py-2 rounded-lg">
+              <option value="">All Categories</option>
+              <option value="Food">Food</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Education">Education</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Essentials">Essentials</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-    <div class="mb-8">
-      <h2 class="text-2xl font-semibold mb-1">Recommended For You</h2>
-      <p class="text-slate-400">Needs matched based on your preferences and location</p>
+          <div>
+            <label class="block text-sm text-slate-300 mb-2">Urgency</label>
+            <select id="filterUrgency" class="w-full px-4 py-2 rounded-lg">
+              <option value="">All Urgency Levels</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm text-slate-300 mb-2">Sort By</label>
+            <select id="sortBy" class="w-full px-4 py-2 rounded-lg">
+              <option value="match">Best Match</option>
+              <option value="urgency">Urgency</option>
+              <option value="recent">Most Recent</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="applyFilters" class="btn-primary px-6 py-2 text-sm mt-4">
+          Apply Filters
+        </button>
+      </div>
     </div>
+  </section>
 
-    <!-- Loading State -->
-    <div id="loadingState" class="glass-card rounded-xl p-8 text-center">
-      <div class="animate-pulse">
-        <div class="text-slate-400">Loading needs...</div>
+  <!-- NEEDS GRID -->
+  <section class="pb-32">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-1">Recommended For You</h2>
+        <p class="text-slate-400">Needs matched based on your preferences and location</p>
+      </div>
+
+      <div id="loadingState" class="glass-card rounded-xl p-8 text-center">
+        <div class="animate-pulse">
+          <div class="text-slate-400">Loading needs...</div>
+        </div>
+      </div>
+
+      <div id="needsContainer" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+  </section>
+</div>
+
+<!-- HISTORY TAB -->
+<div id="historyContent" class="hidden">
+  <section class="pb-32">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="glass-card rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-cyan-400 mb-1" id="totalSponsorships">0</div>
+          <div class="text-slate-400 text-sm">Total Sponsorships</div>
+        </div>
+        <div class="glass-card rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-green-400 mb-1" id="totalDonated">₹0</div>
+          <div class="text-slate-400 text-sm">Total Donated</div>
+        </div>
+        <div class="glass-card rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-yellow-400 mb-1" id="impactScore">0</div>
+          <div class="text-slate-400 text-sm">Impact Score</div>
+        </div>
+      </div>
+
+      <h2 class="text-2xl font-semibold mb-6">Sponsorship History</h2>
+      
+      <div id="historyLoading" class="glass-card rounded-xl p-8 text-center">
+        <div class="animate-pulse text-slate-400">Loading your history...</div>
+      </div>
+
+      <div id="historyContainer" class="hidden space-y-4"></div>
+    </div>
+  </section>
+</div>
+
+<!-- SPONSOR MODAL -->
+<div id="sponsorModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+  <div class="fixed inset-0 bg-black/60 modal-backdrop" onclick="window.closeSponsorModal()"></div>
+
+  <div class="relative glass-card rounded-2xl p-8 max-w-md w-full">
+    <h3 class="text-xl font-semibold mb-4">Choose Sponsorship Type</h3>
+    <p class="text-slate-400 mb-6" id="modalNeedTitle"></p>
+
+    <div class="space-y-4">
+      <!-- Monetary Option -->
+      <div class="glass-card rounded-xl p-4 cursor-pointer hover:bg-slate-700/30 transition" onclick="window.selectSponsorType('monetary')">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-cyan-400/20 flex items-center justify-center text-cyan-400">
+              💰
+            </div>
+            <div>
+              <h4 class="font-semibold">Monetary Donation</h4>
+              <p class="text-xs text-slate-400">Support with funds</p>
+            </div>
+          </div>
+          <input type="radio" name="sponsorType" value="monetary" class="w-5 h-5" />
+        </div>
+        
+        <div id="monetaryAmount" class="hidden mt-3 pt-3 border-t border-slate-700">
+          <label class="block text-sm text-slate-300 mb-2">Donation Amount (₹)</label>
+          <input type="number" id="donationAmount" min="100" step="100" placeholder="Enter amount" class="w-full px-4 py-2 rounded-lg" />
+          <p class="text-xs text-slate-500 mt-1">Minimum: ₹100</p>
+        </div>
+      </div>
+
+      <!-- Delivery Option -->
+      <div class="glass-card rounded-xl p-4 cursor-pointer hover:bg-slate-700/30 transition" onclick="window.selectSponsorType('delivery')">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-teal-400/20 flex items-center justify-center text-teal-400">
+              📦
+            </div>
+            <div>
+              <h4 class="font-semibold">Direct Delivery</h4>
+              <p class="text-xs text-slate-400">Deliver items yourself</p>
+            </div>
+          </div>
+          <input type="radio" name="sponsorType" value="delivery" class="w-5 h-5" />
+        </div>
       </div>
     </div>
 
-    <!-- Needs Container -->
-    <div
-      id="needsContainer"
-      class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    ></div>
-
+    <div class="flex gap-3 mt-6">
+      <button onclick="window.confirmSponsorship()" class="btn-primary flex-1 py-3">
+        Confirm Sponsorship
+      </button>
+      <button onclick="window.closeSponsorModal()" class="btn-outline flex-1 py-3">
+        Cancel
+      </button>
+    </div>
   </div>
-</section>
+</div>
 
-<!-- SPONSOR MODAL -->
-<div
-  id="sponsorModal"
-  class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
->
-  <div
-    class="fixed inset-0 bg-black/60 modal-backdrop"
-    onclick="window.closeSponsorModal()"
-  ></div>
+<!-- SUCCESS MODAL -->
+<div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+  <div class="fixed inset-0 bg-black/60 modal-backdrop" onclick="window.closeSuccessModal()"></div>
 
   <div class="relative glass-card rounded-2xl p-8 max-w-md text-center">
     <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-green-400/20 flex items-center justify-center text-green-400">
       ✓
     </div>
     <h3 class="text-xl font-semibold mb-2">Sponsorship Confirmed</h3>
-    <p id="modalMessage" class="text-slate-400 mb-6">
-      Thank you for your support!
-    </p>
-    <button onclick="window.closeSponsorModal()" class="btn-primary px-6 py-2">
+    <p id="successMessage" class="text-slate-400 mb-6">Thank you for your support!</p>
+    <button onclick="window.closeSuccessModal()" class="btn-primary px-6 py-2">
       Close
     </button>
   </div>
@@ -144,6 +237,7 @@
   import { db } from './js/firebase.js';
   import { showToast } from './js/app.js';
   import { getRecommendedNeeds, getMatchPercentage } from './js/matching.js';
+  import { EMAIL_CONFIG } from './js/email-config.js';
   import {
     collection,
     addDoc,
@@ -156,15 +250,90 @@
     orderBy
   } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+  // Initialize EmailJS
+  if (EMAIL_CONFIG.enabled && EMAIL_CONFIG.publicKey) {
+    emailjs.init(EMAIL_CONFIG.publicKey);
+    console.log('✅ EmailJS initialized');
+  }
+
   let userProfile = null;
   let allNeeds = [];
   let filteredNeeds = [];
+  let currentTab = 'browse';
+  let selectedNeed = null;
+  let selectedType = null;
 
-  window.closeSponsorModal = function () {
-    document.getElementById('sponsorModal').classList.add('hidden');
+  // Tab switching
+  window.switchTab = function(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    if (tab === 'browse') {
+      document.getElementById('browseTab').classList.add('active');
+      document.getElementById('browseContent').classList.remove('hidden');
+      document.getElementById('historyContent').classList.add('hidden');
+    } else {
+      document.getElementById('historyTab').classList.add('active');
+      document.getElementById('browseContent').classList.add('hidden');
+      document.getElementById('historyContent').classList.remove('hidden');
+      loadHistory();
+    }
   };
 
-  window.sponsorNeed = async function (needId, type, title) {
+  window.selectSponsorType = function(type) {
+    selectedType = type;
+    document.querySelectorAll('input[name="sponsorType"]').forEach(radio => {
+      radio.checked = radio.value === type;
+    });
+    
+    if (type === 'monetary') {
+      document.getElementById('monetaryAmount').classList.remove('hidden');
+      document.getElementById('donationAmount').focus();
+    } else {
+      document.getElementById('monetaryAmount').classList.add('hidden');
+    }
+  };
+
+  window.openSponsorModal = function(needId, title) {
+    selectedNeed = allNeeds.find(n => n.id === needId);
+    if (!selectedNeed) return;
+    
+    document.getElementById('modalNeedTitle').textContent = `Sponsoring: ${title}`;
+    document.getElementById('sponsorModal').classList.remove('hidden');
+    selectedType = null;
+    document.getElementById('monetaryAmount').classList.add('hidden');
+    document.getElementById('donationAmount').value = '';
+    document.querySelectorAll('input[name="sponsorType"]').forEach(r => r.checked = false);
+  };
+
+  window.closeSponsorModal = function() {
+    document.getElementById('sponsorModal').classList.add('hidden');
+    selectedNeed = null;
+    selectedType = null;
+  };
+
+  window.closeSuccessModal = function() {
+    document.getElementById('successModal').classList.add('hidden');
+  };
+
+  window.confirmSponsorship = async function() {
+    if (!selectedNeed || !selectedType) {
+      showToast('Please select a sponsorship type', 'error');
+      return;
+    }
+
+    let amount = 0;
+    if (selectedType === 'monetary') {
+      const amountInput = document.getElementById('donationAmount').value;
+      amount = parseInt(amountInput, 10) || 0;
+      
+      if (amount < 100) {
+        showToast('Minimum donation amount is ₹100', 'error');
+        document.getElementById('donationAmount').focus();
+        return;
+      }
+    }
+
     try {
       const user = getCurrentFirebaseUser();
       if (!user) {
@@ -173,39 +342,173 @@
         return;
       }
 
-      // Create sponsorship record
-      await addDoc(collection(db, 'sponsorships'), {
-        needId,
+      // Prepare sponsorship data
+      const sponsorshipData = {
+        needId: selectedNeed.id,
+        needTitle: selectedNeed.title,
+        shelterId: selectedNeed.shelterId,
+        shelterName: selectedNeed.shelterName,
+        shelterEmail: selectedNeed.shelterEmail,
         sponsorId: user.uid,
         sponsorName: userProfile?.name || 'Anonymous',
-        type,
+        sponsorEmail: user.email,
+        sponsorPhone: userProfile?.contactPhone || 'Not provided',
+        type: selectedType,
+        amount: Number(amount),
+        status: 'active',
         createdAt: serverTimestamp()
-      });
+      };
+
+      console.log('📝 Creating sponsorship:', sponsorshipData);
+
+      // Create sponsorship record
+      const docRef = await addDoc(collection(db, 'sponsorships'), sponsorshipData);
+      console.log('✅ Sponsorship created with ID:', docRef.id);
 
       // Update need status
-      const needRef = doc(db, 'needs', needId);
+      const needRef = doc(db, 'needs', selectedNeed.id);
       await updateDoc(needRef, { 
         status: 'SPONSORED',
         sponsoredAt: serverTimestamp(),
-        sponsorId: user.uid
+        sponsorId: user.uid,
+        sponsorshipType: selectedType,
+        donationAmount: Number(amount)
       });
+      console.log('✅ Need updated successfully');
 
-      const message = document.getElementById('modalMessage');
-      message.textContent =
-        type === 'monetary'
-          ? `Thank you for sponsoring "${title}" monetarily.`
-          : `Thank you for choosing direct delivery for "${title}".`;
+      // 📧 SEND EMAIL TO SHELTER
+      if (selectedNeed.shelterEmail && EMAIL_CONFIG.enabled) {
+        console.log('📧 Sending email notification to:', selectedNeed.shelterEmail);
+        
+        try {
+          const emailParams = {
+            to_email: selectedNeed.shelterEmail,
+            shelter_name: selectedNeed.shelterName,
+            need_title: selectedNeed.title,
+            sponsor_name: sponsorshipData.sponsorName,
+            sponsor_email: sponsorshipData.sponsorEmail,
+            sponsor_phone: sponsorshipData.sponsorPhone,
+            sponsor_type: selectedType === 'monetary' ? 'Monetary Donation' : 'Direct Delivery',
+            donation_amount: amount > 0 ? `₹${amount.toLocaleString()}` : ''
+          };
 
-      document.getElementById('sponsorModal').classList.remove('hidden');
-      showToast(`Sponsorship confirmed for "${title}"`, 'success');
+          const response = await emailjs.send(
+            EMAIL_CONFIG.serviceId,
+            EMAIL_CONFIG.templates.sponsor,
+            emailParams
+          );
 
-      // Reload needs after sponsorship
-      await loadNeeds();
+          console.log('✅ Email sent successfully:', response);
+          showToast('Shelter has been notified via email! 📧', 'success');
+        } catch (emailError) {
+          console.error('⚠️ Email sending failed:', emailError);
+          showToast('Sponsorship confirmed! (Email notification pending)', 'success');
+        }
+      }
+
+      // Show success message
+      const message = selectedType === 'monetary' 
+        ? `Thank you for donating ₹${amount.toLocaleString()} to "${selectedNeed.title}"! The shelter has been notified and will contact you soon.`
+        : `Thank you for choosing direct delivery for "${selectedNeed.title}"! The shelter has been notified and will coordinate with you.`;
+
+      document.getElementById('successMessage').textContent = message;
+      window.closeSponsorModal();
+      document.getElementById('successModal').classList.remove('hidden');
+      
+      showToast('Sponsorship confirmed successfully! 🎉', 'success');
+      
+      setTimeout(async () => {
+        await loadNeeds();
+      }, 1500);
+
     } catch (err) {
-      console.error('Sponsorship error:', err);
+      console.error('❌ Sponsorship error:', err);
       showToast('Error processing sponsorship: ' + err.message, 'error');
     }
   };
+
+  async function loadHistory() {
+    const user = getCurrentFirebaseUser();
+    if (!user) return;
+
+    const historyLoading = document.getElementById('historyLoading');
+    const historyContainer = document.getElementById('historyContainer');
+    
+    historyLoading.classList.remove('hidden');
+    historyContainer.classList.add('hidden');
+
+    try {
+      const q = query(
+        collection(db, 'sponsorships'),
+        where('sponsorId', '==', user.uid)
+      );
+
+      const snap = await getDocs(q);
+      let sponsorships = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      sponsorships.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
+
+      const totalAmount = sponsorships.reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
+      const impactScore = sponsorships.length * 10 + Math.floor(totalAmount / 1000);
+
+      document.getElementById('totalSponsorships').textContent = sponsorships.length;
+      document.getElementById('totalDonated').textContent = `₹${totalAmount.toLocaleString()}`;
+      document.getElementById('impactScore').textContent = impactScore;
+
+      historyLoading.classList.add('hidden');
+      historyContainer.classList.remove('hidden');
+
+      if (sponsorships.length === 0) {
+        historyContainer.innerHTML = `
+          <div class="glass-card rounded-xl p-8 text-center text-slate-400">
+            You haven't made any sponsorships yet. Browse needs to get started!
+          </div>`;
+        return;
+      }
+
+      historyContainer.innerHTML = sponsorships.map(s => {
+        const date = s.createdAt?.toDate?.() || new Date();
+        const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const amount = Number(s.amount) || 0;
+        
+        return `
+          <div class="glass-card rounded-xl p-6">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="text-lg font-semibold mb-1">${s.needTitle || 'Untitled'}</h3>
+                <p class="text-sm text-slate-400">${s.shelterName || 'Unknown Shelter'}</p>
+              </div>
+              <span class="status-badge status-sponsored">Active</span>
+            </div>
+
+            <div class="flex gap-4 text-sm text-slate-400 mb-3">
+              <span>📅 ${dateStr}</span>
+              <span>${s.type === 'monetary' ? '💰 Monetary' : '📦 Delivery'}</span>
+              ${amount > 0 ? `<span class="text-green-400 font-semibold">₹${amount.toLocaleString()}</span>` : ''}
+            </div>
+
+            <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-xs text-green-400">
+              ✓ Thank you for your contribution! The shelter has been notified.
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error('❌ Error loading history:', err);
+      historyLoading.classList.add('hidden');
+      historyContainer.classList.remove('hidden');
+      historyContainer.innerHTML = `
+        <div class="glass-card rounded-xl p-8 text-center">
+          <div class="text-red-400 mb-2">Error loading history</div>
+          <div class="text-slate-400 text-sm">${err.message}</div>
+        </div>`;
+    }
+  }
 
   window.addEventListener('load', () => {
     onAuthStateChanged(async (user) => {
@@ -219,12 +522,10 @@
 
       try {
         userProfile = await getUserProfile(user.uid);
-        console.log('User profile loaded:', userProfile);
         await loadNeeds();
       } catch (error) {
         console.error('Error loading profile:', error);
-        showToast('Error loading profile', 'error');
-        await loadNeeds(); // Load anyway without recommendations
+        await loadNeeds();
       }
     });
   });
@@ -235,7 +536,6 @@
     else showToast('Error signing out', 'error');
   });
 
-  // Apply filters
   document.getElementById('applyFilters').addEventListener('click', () => {
     applyFilters();
   });
@@ -256,15 +556,11 @@
       const snap = await getDocs(q);
 
       allNeeds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      console.log(`Loaded ${allNeeds.length} open needs`);
       
-      // Apply recommendations if profile exists
       if (userProfile && userProfile.city && userProfile.preferredCategories) {
-        console.log('Applying recommendations...');
         const recommended = await getRecommendedNeeds(allNeeds, userProfile, 'sponsor');
         filteredNeeds = recommended;
       } else {
-        console.log('No complete profile - showing all needs');
         filteredNeeds = allNeeds;
       }
 
@@ -273,7 +569,6 @@
     } catch (err) {
       console.error('Error loading needs:', err);
       
-      // Fallback query without orderBy
       try {
         const q2 = query(collection(db, 'needs'), where('status', '==', 'OPEN'));
         const snap2 = await getDocs(q2);
@@ -282,11 +577,7 @@
         applyFilters();
       } catch (err2) {
         console.error('Fallback query failed:', err2);
-        loadingState.innerHTML = `
-          <div class="text-red-400">
-            Error loading needs. Please refresh the page.
-          </div>`;
-        showToast('Error loading needs', 'error');
+        loadingState.innerHTML = `<div class="text-red-400">Error loading needs. Please refresh the page.</div>`;
       }
     }
   }
@@ -298,17 +589,14 @@
 
     let filtered = [...filteredNeeds];
 
-    // Apply category filter
     if (category) {
       filtered = filtered.filter(n => n.category === category);
     }
 
-    // Apply urgency filter
     if (urgency) {
       filtered = filtered.filter(n => n.urgency === urgency);
     }
 
-    // Apply sorting
     if (sortBy === 'urgency') {
       const urgencyOrder = { high: 3, medium: 2, low: 1 };
       filtered.sort((a, b) => 
@@ -321,7 +609,6 @@
         return bTime - aTime;
       });
     }
-    // 'match' sorting is default from recommendations
 
     renderNeeds(filtered);
   }
@@ -387,21 +674,12 @@
             </div>
           ` : ''}
 
-          <div class="flex gap-2">
-            <button
-              onclick="window.sponsorNeed('${need.id}','monetary','${need.title.replace(/'/g, "\\'")}')"
-              class="btn-primary flex-1 py-2 text-sm"
-            >
-              Sponsor
-            </button>
-
-            <button
-              onclick="window.sponsorNeed('${need.id}','delivery','${need.title.replace(/'/g, "\\'")}')"
-              class="btn-outline flex-1 py-2 text-sm"
-            >
-              Deliver
-            </button>
-          </div>
+          <button
+            onclick="window.openSponsorModal('${need.id}','${need.title.replace(/'/g, "\\'")}')"
+            class="btn-primary w-full py-2 text-sm"
+          >
+            👍 Sponsor Now
+          </button>
         </div>
       `;
     }).join('');

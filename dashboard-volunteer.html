@@ -7,6 +7,9 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css" />
+  
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 
 <body class="min-h-screen">
@@ -40,88 +43,121 @@
   </div>
 </section>
 
-<!-- FILTERS -->
+<!-- TABS -->
 <section class="pb-8">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="glass-card rounded-xl p-6">
-      <h3 class="text-lg font-semibold mb-4">Filter Opportunities</h3>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Category Filter -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Category</label>
-          <select id="filterCategory" class="w-full px-4 py-2 rounded-lg">
-            <option value="">All Categories</option>
-            <option value="Food">Food</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Education">Education</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Essentials">Essentials</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <!-- Status Filter -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Status</label>
-          <select id="filterStatus" class="w-full px-4 py-2 rounded-lg">
-            <option value="both">Open & Sponsored</option>
-            <option value="OPEN">Open Only</option>
-            <option value="SPONSORED">Sponsored Only</option>
-          </select>
-        </div>
-
-        <!-- Sort By -->
-        <div>
-          <label class="block text-sm text-slate-300 mb-2">Sort By</label>
-          <select id="sortBy" class="w-full px-4 py-2 rounded-lg">
-            <option value="match">Best Match</option>
-            <option value="recent">Most Recent</option>
-          </select>
-        </div>
-      </div>
-
-      <button id="applyFilters" class="btn-primary px-6 py-2 text-sm mt-4">
-        Apply Filters
+    <div class="flex gap-4 mb-6">
+      <button onclick="window.switchTab('browse')" id="browseTab" class="tab-btn active px-6 py-3 rounded-lg">
+        Browse Opportunities
+      </button>
+      <button onclick="window.switchTab('history')" id="historyTab" class="tab-btn px-6 py-3 rounded-lg">
+        My Commitments
       </button>
     </div>
   </div>
 </section>
 
-<!-- NEEDS GRID -->
-<section class="pb-32">
-  <div class="max-w-7xl mx-auto px-6">
+<!-- BROWSE TAB -->
+<div id="browseContent">
+  <!-- FILTERS -->
+  <section class="pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="glass-card rounded-xl p-6">
+        <h3 class="text-lg font-semibold mb-4">Filter Opportunities</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm text-slate-300 mb-2">Category</label>
+            <select id="filterCategory" class="w-full px-4 py-2 rounded-lg">
+              <option value="">All Categories</option>
+              <option value="Food">Food</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Education">Education</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Essentials">Essentials</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-    <div class="mb-8">
-      <h2 class="text-2xl font-semibold mb-1">Recommended For You</h2>
-      <p class="text-slate-400">Opportunities matched to your skills and location</p>
-    </div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-2">Status</label>
+            <select id="filterStatus" class="w-full px-4 py-2 rounded-lg">
+              <option value="both">Open & Sponsored</option>
+              <option value="OPEN">Open Only</option>
+              <option value="SPONSORED">Sponsored Only</option>
+            </select>
+          </div>
 
-    <!-- Loading State -->
-    <div id="loadingState" class="glass-card rounded-xl p-8 text-center">
-      <div class="animate-pulse">
-        <div class="text-slate-400">Loading opportunities...</div>
+          <div>
+            <label class="block text-sm text-slate-300 mb-2">Sort By</label>
+            <select id="sortBy" class="w-full px-4 py-2 rounded-lg">
+              <option value="match">Best Match</option>
+              <option value="recent">Most Recent</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="applyFilters" class="btn-primary px-6 py-2 text-sm mt-4">
+          Apply Filters
+        </button>
       </div>
     </div>
+  </section>
 
-    <!-- Needs Container -->
-    <div
-      id="needsContainer"
-      class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    ></div>
+  <!-- NEEDS GRID -->
+  <section class="pb-32">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-1">Recommended For You</h2>
+        <p class="text-slate-400">Opportunities matched to your skills and location</p>
+      </div>
 
-  </div>
-</section>
+      <div id="loadingState" class="glass-card rounded-xl p-8 text-center">
+        <div class="animate-pulse">
+          <div class="text-slate-400">Loading opportunities...</div>
+        </div>
+      </div>
+
+      <div id="needsContainer" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+  </section>
+</div>
+
+<!-- HISTORY TAB -->
+<div id="historyContent" class="hidden">
+  <section class="pb-32">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="glass-card rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-cyan-400 mb-1" id="totalSignups">0</div>
+          <div class="text-slate-400 text-sm">Active Commitments</div>
+        </div>
+        <div class="glass-card rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-green-400 mb-1" id="hoursContributed">0</div>
+          <div class="text-slate-400 text-sm">Est. Hours</div>
+        </div>
+        <div class="glass-card rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-yellow-400 mb-1" id="impactScore">0</div>
+          <div class="text-slate-400 text-sm">Impact Score</div>
+        </div>
+      </div>
+
+      <h2 class="text-2xl font-semibold mb-6">My Volunteer Commitments</h2>
+      
+      <div id="historyLoading" class="glass-card rounded-xl p-8 text-center">
+        <div class="animate-pulse text-slate-400">Loading your commitments...</div>
+      </div>
+
+      <div id="historyContainer" class="hidden space-y-4"></div>
+    </div>
+  </section>
+</div>
 
 <!-- SIGNUP MODAL -->
-<div
-  id="signupModal"
-  class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
->
-  <div
-    class="fixed inset-0 bg-black/60 modal-backdrop"
-    onclick="window.closeSignupModal()"
-  ></div>
+<div id="signupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+  <div class="fixed inset-0 bg-black/60 modal-backdrop" onclick="window.closeSignupModal()"></div>
 
   <div class="relative glass-card rounded-2xl p-8 max-w-md text-center">
     <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-green-400/20 flex items-center justify-center text-green-400">
@@ -142,6 +178,7 @@
   import { db } from './js/firebase.js';
   import { showToast } from './js/app.js';
   import { getRecommendedNeeds, getMatchPercentage } from './js/matching.js';
+  import { EMAIL_CONFIG } from './js/email-config.js';
   import {
     collection,
     addDoc,
@@ -152,9 +189,32 @@
     orderBy
   } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+  // Initialize EmailJS
+  if (EMAIL_CONFIG.enabled && EMAIL_CONFIG.publicKey) {
+    emailjs.init(EMAIL_CONFIG.publicKey);
+    console.log('✅ EmailJS initialized');
+  }
+
   let userProfile = null;
   let allNeeds = [];
   let filteredNeeds = [];
+  let currentTab = 'browse';
+
+  window.switchTab = function(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    if (tab === 'browse') {
+      document.getElementById('browseTab').classList.add('active');
+      document.getElementById('browseContent').classList.remove('hidden');
+      document.getElementById('historyContent').classList.add('hidden');
+    } else {
+      document.getElementById('historyTab').classList.add('active');
+      document.getElementById('browseContent').classList.add('hidden');
+      document.getElementById('historyContent').classList.remove('hidden');
+      loadHistory();
+    }
+  };
 
   window.closeSignupModal = function () {
     document.getElementById('signupModal').classList.add('hidden');
@@ -169,6 +229,8 @@
         return;
       }
 
+      console.log('🤝 Signing up for need:', needId, title);
+
       // Check if already signed up
       const existingQuery = query(
         collection(db, 'volunteer_signups'),
@@ -182,25 +244,168 @@
         return;
       }
 
-      // Create signup record
-      await addDoc(collection(db, 'volunteer_signups'), {
-        needId,
+      const need = allNeeds.find(n => n.id === needId);
+
+      // Prepare signup data
+      const signupData = {
+        needId: needId,
+        needTitle: title,
+        shelterId: need?.shelterId || '',
+        shelterName: need?.shelterName || 'Unknown Shelter',
+        shelterEmail: need?.shelterEmail,
         volunteerId: user.uid,
         volunteerName: userProfile?.name || 'Anonymous',
+        volunteerEmail: user.email,
+        volunteerPhone: userProfile?.contactPhone || 'Not provided',
         skills: userProfile?.skills || [],
+        status: 'active',
         createdAt: serverTimestamp()
-      });
+      };
 
+      console.log('📝 Creating volunteer signup:', signupData);
+
+      // Create volunteer signup record
+      const docRef = await addDoc(collection(db, 'volunteer_signups'), signupData);
+      console.log('✅ Volunteer signup created with ID:', docRef.id);
+
+      // 📧 SEND EMAIL TO SHELTER
+      if (need?.shelterEmail && EMAIL_CONFIG.enabled) {
+        console.log('📧 Sending email notification to:', need.shelterEmail);
+        
+        try {
+          const emailParams = {
+            to_email: need.shelterEmail,
+            shelter_name: need.shelterName,
+            need_title: title,
+            volunteer_name: signupData.volunteerName,
+            volunteer_email: signupData.volunteerEmail,
+            volunteer_phone: signupData.volunteerPhone,
+            volunteer_skills: signupData.skills && signupData.skills.length > 0 
+              ? signupData.skills.join(', ') 
+              : 'General support'
+          };
+
+          const response = await emailjs.send(
+            EMAIL_CONFIG.serviceId,
+            EMAIL_CONFIG.templates.volunteer,
+            emailParams
+          );
+
+          console.log('✅ Email sent successfully:', response);
+          showToast('Shelter has been notified via email! 📧', 'success');
+        } catch (emailError) {
+          console.error('⚠️ Email sending failed:', emailError);
+          showToast('Signup confirmed! (Email notification pending)', 'success');
+        }
+      }
+
+      // Show success modal
       document.getElementById('modalMessage').textContent =
-        `You've successfully signed up for "${title}". The organization will contact you soon.`;
+        `You've successfully signed up for "${title}". The organization has been notified and will contact you soon with details about volunteer activities.`;
 
       document.getElementById('signupModal').classList.remove('hidden');
-      showToast(`Signed up for "${title}"`, 'success');
+      showToast(`Signed up for "${title}" 🎉`, 'success');
+      
+      setTimeout(async () => {
+        await loadNeeds();
+      }, 1500);
+
     } catch (err) {
-      console.error('Signup error:', err);
+      console.error('❌ Signup error:', err);
       showToast('Error signing up: ' + err.message, 'error');
     }
   };
+
+  async function loadHistory() {
+    const user = getCurrentFirebaseUser();
+    if (!user) return;
+
+    const historyLoading = document.getElementById('historyLoading');
+    const historyContainer = document.getElementById('historyContainer');
+    
+    historyLoading.classList.remove('hidden');
+    historyContainer.classList.add('hidden');
+
+    try {
+      const q = query(
+        collection(db, 'volunteer_signups'),
+        where('volunteerId', '==', user.uid)
+      );
+
+      const snap = await getDocs(q);
+      let signups = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      signups.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0;
+        const bTime = b.createdAt?.seconds || 0;
+        return bTime - aTime;
+      });
+
+      const hoursEst = signups.length * 5;
+      const impactScore = signups.length * 15;
+
+      document.getElementById('totalSignups').textContent = signups.length;
+      document.getElementById('hoursContributed').textContent = hoursEst;
+      document.getElementById('impactScore').textContent = impactScore;
+
+      historyLoading.classList.add('hidden');
+      historyContainer.classList.remove('hidden');
+
+      if (signups.length === 0) {
+        historyContainer.innerHTML = `
+          <div class="glass-card rounded-xl p-8 text-center text-slate-400">
+            You haven't signed up for any opportunities yet. Browse to get started!
+          </div>`;
+        return;
+      }
+
+      historyContainer.innerHTML = signups.map(s => {
+        const date = s.createdAt?.toDate?.() || new Date();
+        const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        
+        return `
+          <div class="glass-card rounded-xl p-6">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="text-lg font-semibold mb-1">${s.needTitle || 'Untitled'}</h3>
+                <p class="text-sm text-slate-400">${s.shelterName || 'Unknown Shelter'}</p>
+              </div>
+              <span class="status-badge status-open">Active</span>
+            </div>
+
+            <div class="flex gap-4 text-sm text-slate-400 mb-3">
+              <span>📅 ${dateStr}</span>
+              ${s.skills?.length ? `<span>🛠️ ${s.skills.length} skills</span>` : ''}
+            </div>
+
+            ${s.skills?.length ? `
+              <div class="flex flex-wrap gap-2 mb-3">
+                ${s.skills.map(skill => `
+                  <span class="px-2 py-1 rounded-full bg-cyan-400/10 text-cyan-400 text-xs">
+                    ${skill}
+                  </span>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-xs text-green-400">
+              ✓ You're committed to this opportunity! The shelter has your contact details.
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error('❌ Error loading history:', err);
+      historyLoading.classList.add('hidden');
+      historyContainer.classList.remove('hidden');
+      historyContainer.innerHTML = `
+        <div class="glass-card rounded-xl p-8 text-center">
+          <div class="text-red-400 mb-2">Error loading commitments</div>
+          <div class="text-slate-400 text-sm">${err.message}</div>
+        </div>`;
+    }
+  }
 
   window.addEventListener('load', () => {
     onAuthStateChanged(async (user) => {
@@ -214,12 +419,10 @@
 
       try {
         userProfile = await getUserProfile(user.uid);
-        console.log('User profile loaded:', userProfile);
         await loadNeeds();
       } catch (error) {
         console.error('Error loading profile:', error);
-        showToast('Error loading profile', 'error');
-        await loadNeeds(); // Load anyway without recommendations
+        await loadNeeds();
       }
     });
   });
@@ -230,7 +433,6 @@
     else showToast('Error signing out', 'error');
   });
 
-  // Apply filters
   document.getElementById('applyFilters').addEventListener('click', () => {
     applyFilters();
   });
@@ -251,15 +453,11 @@
 
       const snap = await getDocs(q);
       allNeeds = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      console.log(`Loaded ${allNeeds.length} needs`);
       
-      // Apply recommendations if profile exists
       if (userProfile && userProfile.city && userProfile.skills && userProfile.skills.length > 0) {
-        console.log('Applying recommendations...');
         const recommended = await getRecommendedNeeds(allNeeds, userProfile, 'volunteer');
         filteredNeeds = recommended;
       } else {
-        console.log('No complete profile - showing all needs');
         filteredNeeds = allNeeds;
       }
 
@@ -268,7 +466,6 @@
     } catch (err) {
       console.error('Error loading needs:', err);
       
-      // Fallback query without orderBy
       try {
         const q2 = query(
           collection(db, 'needs'),
@@ -280,11 +477,7 @@
         applyFilters();
       } catch (err2) {
         console.error('Fallback query failed:', err2);
-        loadingState.innerHTML = `
-          <div class="text-red-400">
-            Error loading opportunities. Please refresh the page.
-          </div>`;
-        showToast('Error loading opportunities', 'error');
+        loadingState.innerHTML = `<div class="text-red-400">Error loading opportunities. Please refresh the page.</div>`;
       }
     }
   }
@@ -296,17 +489,14 @@
 
     let filtered = [...filteredNeeds];
 
-    // Apply category filter
     if (category) {
       filtered = filtered.filter(n => n.category === category);
     }
 
-    // Apply status filter
     if (status !== 'both') {
       filtered = filtered.filter(n => n.status === status);
     }
 
-    // Apply sorting
     if (sortBy === 'recent') {
       filtered.sort((a, b) => {
         const aTime = a.createdAt?.seconds || 0;
@@ -314,7 +504,6 @@
         return bTime - aTime;
       });
     }
-    // 'match' sorting is default from recommendations
 
     renderNeeds(filtered);
   }
@@ -384,7 +573,7 @@
             onclick="window.signUpForNeed('${need.id}','${need.title.replace(/'/g, "\\'")}')"
             class="btn-primary w-full py-2 text-sm"
           >
-            Sign Up to Volunteer
+            🤝 Sign Up to Volunteer
           </button>
         </div>
       `;
