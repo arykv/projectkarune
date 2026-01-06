@@ -24,7 +24,7 @@
         }
 
         .container {
-            max-width: 500px;
+            max-width: 550px;
             padding: 60px 50px;
             text-align: center;
             border-radius: 32px;
@@ -94,6 +94,29 @@
             }
         }
 
+        .language-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .language-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .language-button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 50px 40px;
@@ -141,15 +164,33 @@
             Have natural conversations powered by advanced AI technology
         </p>
         
-        <!-- CTA Button -->
-        <a href="https://vapi.ai?demo=true&shareKey=5cbf5ed2-cf93-4672-9a3d-c945d71561be&assistantId=49992bba-45e9-40bc-8e24-d88229cc424e" 
-           class="btn-primary inline-flex items-center gap-2 px-12 py-4 text-base group" 
-           target="_blank">
-            <span>Begin Call</span>
-            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-            </svg>
-        </a>
+        <!-- Language Selection Label -->
+        <p class="text-sm text-slate-500 mb-4 font-medium">Choose Your Language:</p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <!-- English Button -->
+            <a href="https://vapi.ai?demo=true&shareKey=5cbf5ed2-cf93-4672-9a3d-c945d71561be&assistantId=49992bba-45e9-40bc-8e24-d88229cc424e" 
+               class="btn-primary language-button inline-flex items-center gap-2 px-10 py-4 text-base group w-full sm:w-auto justify-center" 
+               target="_blank">
+                <span class="text-xl">🇬🇧</span>
+                <span>English</span>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </a>
+
+            <!-- Hindi Button -->
+            <a href="https://vapi.ai?demo=true&shareKey=5cbf5ed2-cf93-4672-9a3d-c945d71561be&assistantId=1a179c4a-1c1b-4974-a9b4-07b3a8bf9d28" 
+               class="btn-primary language-button inline-flex items-center gap-2 px-10 py-4 text-base group w-full sm:w-auto justify-center" 
+               target="_blank">
+                <span class="text-xl">🇮🇳</span>
+                <span>हिंदी</span>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </a>
+        </div>
 
         <!-- Features -->
         <div class="mt-12 pt-8 border-t border-slate-200/50">
@@ -172,7 +213,7 @@
         <!-- Info Badge -->
         <div class="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-50 border border-cyan-100 text-xs text-cyan-700">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            Available 24/7
+            Available 24/7 • Bilingual Support
         </div>
     </div>
 </main>
