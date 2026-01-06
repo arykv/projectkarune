@@ -3,213 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retell AI Call Agent</title>
+    <title>AI Voice Assistant — Karune Connect</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .icon-wrapper {
+            animation: float 3s ease-in-out infinite;
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-            padding: 40px;
+            max-width: 500px;
+            padding: 60px 50px;
             text-align: center;
+            border-radius: 32px;
+            position: relative;
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 32px;
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 32px 32px 0 0;
         }
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .info-box {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-            border-radius: 8px;
+        .feature-item {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
         }
 
-        .info-box h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 18px;
+        .feature-item:nth-child(1) { animation-delay: 0.2s; }
+        .feature-item:nth-child(2) { animation-delay: 0.3s; }
+        .feature-item:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .info-box p {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 10px;
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
         }
 
-        .info-box code {
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
         }
 
-        .call-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            font-size: 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            margin: 20px 0;
-            font-weight: 600;
-        }
-
-        .call-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .call-button:active {
-            transform: translateY(0);
-        }
-
-        .note {
-            background: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-top: 20px;
-            border: 1px solid #ffeeba;
-        }
-
-        .alternatives {
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #eee;
-        }
-
-        .alternatives h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .alt-option {
-            background: #f8f9fa;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            text-align: left;
-        }
-
-        .alt-option strong {
-            color: #667eea;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .alt-option a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .alt-option a:hover {
-            text-decoration: underline;
+        @media (max-width: 768px) {
+            .container {
+                padding: 50px 40px;
+                border-radius: 28px;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>🎙️ AI Call Agent</h1>
-        <p class="subtitle">Click the button below to start talking with AI</p>
+<body class="min-h-screen">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 inset-x-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center text-black font-bold">
+        ♥
+      </div>
+      <span class="text-xl font-semibold">Karune<span class="text-cyan-400">Connect</span></span>
+    </a>
+
+    <div class="flex items-center space-x-6">
+      <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+      <a href="impact.html" class="hover:text-cyan-400 transition">Impact</a>
+      <a href="login.html" class="btn-outline px-5 py-2 text-sm">Login</a>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="flex-1 flex items-center justify-center px-6 py-24 pt-32">
+    <div class="container glass-card">
+        <!-- Floating Icon with Pulse Effect -->
+        <div class="relative w-20 h-20 mx-auto mb-8">
+            <div class="pulse-ring"></div>
+            <div class="icon-wrapper w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center text-4xl shadow-xl relative z-10">
+                🎙️
+            </div>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h1 class="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            AI Voice Assistant
+        </h1>
+        <p class="text-slate-400 mb-10 text-base max-w-md mx-auto">
+            Have natural conversations powered by advanced AI technology
+        </p>
         
-        <button class="call-button" onclick="startRetellCall()">📞 Start AI Call</button>
+        <!-- CTA Button -->
+        <a href="https://vapi.ai?demo=true&shareKey=5cbf5ed2-cf93-4672-9a3d-c945d71561be&assistantId=49992bba-45e9-40bc-8e24-d88229cc424e" 
+           class="btn-primary inline-flex items-center gap-2 px-12 py-4 text-base group" 
+           target="_blank">
+            <span>Begin Call</span>
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+        </a>
 
-        <div class="info-box">
-            <h3>How it works:</h3>
-            <p>This uses a simple JavaScript function to open Retell's hosted call interface. No complex SDK required!</p>
+        <!-- Features -->
+        <div class="mt-12 pt-8 border-t border-slate-200/50">
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="feature-item">
+                    <div class="text-2xl mb-2">⚡</div>
+                    <div class="text-xs text-slate-500">Instant<br/>Response</div>
+                </div>
+                <div class="feature-item">
+                    <div class="text-2xl mb-2">🧠</div>
+                    <div class="text-xs text-slate-500">Smart<br/>AI</div>
+                </div>
+                <div class="feature-item">
+                    <div class="text-2xl mb-2">🔒</div>
+                    <div class="text-xs text-slate-500">Secure &<br/>Private</div>
+                </div>
+            </div>
         </div>
 
-        <div class="note">
-            💡 <strong>For GitHub Pages:</strong> This HTML file works perfectly with GitHub Pages. Just commit and push to your repo!
-        </div>
-
-        <div class="alternatives">
-            <h3>Better Alternatives for GitHub Pages:</h3>
-            
-            <div class="alt-option">
-                <strong>1. Bland AI</strong>
-                <p>Simple embed code, no SDK issues. Great for GitHub Pages.</p>
-                <a href="https://www.bland.ai/" target="_blank">→ Visit Bland.ai</a>
-            </div>
-
-            <div class="alt-option">
-                <strong>2. ElevenLabs Conversational AI</strong>
-                <p>Easy widget integration, reliable and simple.</p>
-                <a href="https://elevenlabs.io/conversational-ai" target="_blank">→ Visit ElevenLabs</a>
-            </div>
-
-            <div class="alt-option">
-                <strong>3. Synthflow AI</strong>
-                <p>Simple embed widget, works great on static sites.</p>
-                <a href="https://synthflow.ai/" target="_blank">→ Visit Synthflow</a>
-            </div>
-
-            <div class="alt-option">
-                <strong>4. Voiceflow Widget</strong>
-                <p>Easy iframe/widget embed for voice assistants.</p>
-                <a href="https://www.voiceflow.com/" target="_blank">→ Visit Voiceflow</a>
-            </div>
+        <!-- Info Badge -->
+        <div class="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-50 border border-cyan-100 text-xs text-cyan-700">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            Available 24/7
         </div>
     </div>
+</main>
 
-    <script>
-        function startRetellCall() {
-            // Method 1: Open Retell call in new window
-            const agentId = "agent_8ad9e9572ffba730f120f41e89";
-            const callUrl = `https://app.retellai.com/call/${agentId}`;
-            
-            // Open in new window
-            const width = 400;
-            const height = 600;
-            const left = (screen.width - width) / 2;
-            const top = (screen.height - height) / 2;
-            
-            window.open(
-                callUrl,
-                'RetellCall',
-                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
-            );
-        }
+<!-- FOOTER -->
+<footer class="py-8 text-center border-t border-slate-200/50">
+    <p class="text-xs text-slate-500">© 2024 Project Karune. Made with ♥ for humanity.</p>
+</footer>
 
-        // Alternative: Create a phone number based calling system
-        function createPhoneCallOption() {
-            // If Retell gives you a phone number for your agent, you can use:
-            // window.location.href = 'tel:+1234567890';
-            // This works great on mobile devices!
-        }
-    </script>
 </body>
 </html>
