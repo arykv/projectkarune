@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Karune Connect – AI Call Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Retell Chat Widget Script -->
+  <script
+    id="retell-widget"
+    src="https://dashboard.retellai.com/retell-widget.js"
+    type="module"
+    data-public-key="public_key_fb89b6c3f3e368350412a"
+    data-agent-id="agent_8ad9e9572ffba730f120f41e89"
+  ></script>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- INTERNAL CSS -->
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(
+          1000px 500px at 50% -200px,
+          rgba(59, 130, 246, 0.18),
+          transparent 60%
+        ),
+        linear-gradient(180deg, #eef8ff, #ffffff);
+
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(15, 23, 42, 0.08);
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --shadow: 0 20px 40px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .page-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .call-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      text-align: center;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .call-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 25px 50px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .card-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+
+    .card-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .call-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 120px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #60a5fa);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-hover), #3b82f6);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    }
+
+    .status-container {
+      margin-bottom: 20px;
+    }
+
+    .status-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .footer {
+      margin-top: 32px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .call-card {
+        padding: 32px 20px;
+      }
+      .card-title {
+        font-size: 1.5rem;
+      }
+      .call-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      .btn {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-container">
+    <div class="call-card">
+      <h2 class="card-title">
+        <i class="fas fa-robot"></i> AI Chat Assistant
+      </h2>
+      <p class="card-subtitle">
+        Chat with Karune Connect’s AI to register or ask questions. Click below to start chatting.
+      </p>
+
+      <div class="call-actions">
+        <button id="startChat" class="btn btn-primary" aria-label="Start AI Chat">
+          <i class="fas fa-comments"></i> Start Chat
+        </button>
+      </div>
+
+      <div class="status-container">
+        <p id="status" class="status-text">
+          Ready to chat. Click the button or look for the chat icon.
+        </p>
+      </div>
+
+      <div class="footer">
+        Powered by <a href="https://retellai.com" target="_blank" rel="noopener">Retell AI</a> | 
+        <a href="#" id="helpLink">Help</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- INLINE JAVASCRIPT -->
+  <script>
+    const startBtn = document.getElementById("startChat");
+    const statusText = document.getElementById("status");
+    const helpLink = document.getElementById("helpLink");
+
+    startBtn.addEventListener("click", () => {
+      statusText.textContent = "Look for the chat icon in the bottom-right corner to start chatting.";
+      alert("The Retell chat widget should appear as a floating button. Click it to start a conversation!");
+    });
+
+    helpLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      alert("For help, please contact support@karuneconnect.com or check Retell AI documentation at https://docs.retellai.com");
+    });
+  </script>
+</body>
+</html>
