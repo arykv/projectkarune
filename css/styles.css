@@ -1,12 +1,11 @@
 /* ===============================
-   Karune Connect – Light Premium Theme
-   Reference-inspired (Soft Glass + Calm Blue)
-   NO functionality changes
+   Karune Connect – Enhanced Light Premium Theme
+   Improved UX with subtle animations and polish
    =============================== */
 
    :root {
     /* Backgrounds */
-    --bg-main: #f4f9ff;          /* very light blue */
+    --bg-main: #f4f9ff;
     --bg-soft: #ffffff;
   
     /* Cards */
@@ -14,12 +13,12 @@
     --card-border: rgba(2, 6, 23, 0.08);
   
     /* Text */
-    --text-main: #0f172a;        /* slate-900 */
-    --text-muted: #64748b;       /* slate-500 */
+    --text-main: #0f172a;
+    --text-muted: #64748b;
   
-    /* Accent (single, consistent blue) */
-    --accent: #3b82f6;           /* blue-500 */
-    --accent-2: #60a5fa;         /* blue-400 */
+    /* Accent */
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
   
     /* Status */
     --success: #22c55e;
@@ -60,14 +59,51 @@
     background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--card-border);
+    transition: all 0.3s ease;
   }
   
   nav a {
     color: var(--text-muted);
+    transition: color 0.2s ease;
+    position: relative;
   }
   
   nav a:hover {
     color: var(--text-main);
+  }
+  
+  /* Navbar logo link - clickable with hover effect */
+  .logo-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+  }
+  
+  .logo-link:hover {
+    transform: translateY(-1px);
+  }
+  
+  .logo-icon {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .logo-link:hover .logo-icon {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Active nav link indicator */
+  nav a.text-white::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 2px;
   }
   
   /* -------------------------------
@@ -84,27 +120,55 @@
     border-radius: 9999px !important;
     font-weight: 600;
     box-shadow: 0 8px 20px rgba(59,130,246,0.25);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+  
+  .btn-primary:hover::before {
+    left: 100%;
   }
   
   .btn-primary:hover {
     box-shadow: 0 12px 28px rgba(59,130,246,0.35);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(0);
   }
   
   /* -------------------------------
-     Glass Cards (light)
+     Glass Cards
   -------------------------------- */
   .glass-card,
   .bg-white {
     background: var(--card-bg) !important;
     backdrop-filter: blur(12px);
     border: 1px solid var(--card-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  /* Elevation hover */
   .card-hover:hover {
     transform: translateY(-6px);
     box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    border-color: rgba(59, 130, 246, 0.2);
   }
   
   /* -------------------------------
@@ -115,11 +179,14 @@
     color: var(--text-main);
     background: rgba(15, 23, 42, 0.02);
     border-radius: 9999px;
+    transition: all 0.3s ease;
   }
   
   .btn-outline:hover {
     background: rgba(59,130,246,0.08);
     border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59,130,246,0.15);
   }
   
   /* -------------------------------
@@ -131,6 +198,7 @@
     background: rgba(255,255,255,0.9) !important;
     border: 1px solid var(--card-border) !important;
     color: var(--text-main) !important;
+    transition: all 0.3s ease;
   }
   
   input::placeholder,
@@ -143,12 +211,29 @@
   select:focus {
     outline: none;
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    transform: translateY(-1px);
+  }
+  
+  input:hover,
+  textarea:hover,
+  select:hover {
+    border-color: rgba(59, 130, 246, 0.3) !important;
   }
   
   /* -------------------------------
      Status Badges
   -------------------------------- */
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+  }
+  
   .status-open {
     background: rgba(59,130,246,0.12);
     color: var(--accent);
@@ -171,9 +256,16 @@
     border-radius: 9999px;
     background: rgba(15,23,42,0.04) !important;
     color: var(--text-muted) !important;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
   }
   
-  .filter-btn.bg-purple-600,
+  .filter-btn:hover {
+    background: rgba(59,130,246,0.08) !important;
+    border-color: rgba(59,130,246,0.2);
+    transform: translateY(-1px);
+  }
+  
   .filter-btn.active {
     background: linear-gradient(
       135deg,
@@ -181,13 +273,35 @@
       var(--accent-2)
     ) !important;
     color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
   }
   
   /* -------------------------------
      Modals
   -------------------------------- */
   .modal-backdrop {
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .glass-card {
+    animation: slideUp 0.3s ease;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   
   /* -------------------------------
@@ -200,6 +314,8 @@
       var(--accent-2)
     );
     box-shadow: 0 0 12px rgba(59,130,246,0.35);
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
   }
   
   /* -------------------------------
@@ -210,7 +326,198 @@
     border-top: 1px solid var(--card-border);
     color: var(--text-muted);
   }
-  .progress-bar {
-    transition: width 1.5s ease-out;
-    width: 0%;
+  
+  footer a {
+    transition: color 0.2s ease;
   }
+  
+  footer a:hover {
+    color: var(--accent);
+  }
+  
+  /* -------------------------------
+     Loading States
+  -------------------------------- */
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  /* -------------------------------
+     Smooth Scrolling
+  -------------------------------- */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* -------------------------------
+     Selection
+  -------------------------------- */
+  ::selection {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--text-main);
+  }
+  
+  /* -------------------------------
+     Need Cards Enhanced
+  -------------------------------- */
+  .need-card {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .need-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .need-card:hover::before {
+    transform: scaleX(1);
+  }
+  
+  /* -------------------------------
+     Match Badge Animation
+  -------------------------------- */
+  .match-badge {
+    animation: bounceIn 0.5s ease;
+  }
+  
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* -------------------------------
+     Checkbox Styling
+  -------------------------------- */
+  input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+  
+  input[type="radio"] {
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+  
+  /* -------------------------------
+     Role Selection Cards
+  -------------------------------- */
+  .role-card {
+    transition: all 0.3s ease;
+  }
+  
+  .role-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
+  }
+  
+  /* -------------------------------
+     Stats Counter Animation
+  -------------------------------- */
+  .stat-number {
+    font-variant-numeric: tabular-nums;
+    transition: transform 0.3s ease;
+  }
+  
+  .glass-card:hover .stat-number {
+    transform: scale(1.05);
+  }
+  
+  /* -------------------------------
+     Utility Classes
+  -------------------------------- */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* -------------------------------
+     Responsive Enhancements
+  -------------------------------- */
+  @media (max-width: 768px) {
+    .card-hover:hover {
+      transform: translateY(-3px);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-1px);
+    }
+  }
+  
+  /* -------------------------------
+     Focus Visible (Accessibility)
+  -------------------------------- */
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .tab-btn {
+  background: rgba(15,23,42,0.04);
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  font-weight: 600;
+}
+
+.tab-btn:hover {
+  background: rgba(59,130,246,0.08);
+  border-color: rgba(59,130,246,0.2);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+}.tab-btn {
+  background: rgba(15,23,42,0.04);
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  font-weight: 600;
+}
+
+.tab-btn:hover {
+  background: rgba(59,130,246,0.08);
+  border-color: rgba(59,130,246,0.2);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+}
